@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+}
+
+.App {
+    height: 100vh;
+    background-color: rgb(217, 226, 226);
+    position: relative;
+}
+
+.App hr {
+    margin: 2px 0 2px 0;
+    
+}
+
+
+
+.App .content {
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(163, 165, 165);
+}

@@ -1,0 +1,43 @@
+.main-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-page .content {
+  margin-top: 5px;
+  height: 100%;
+  width: 100%;
+}
+
+.main-page .content .left-side-menu {
+  width: 150px;
+  height: 89vh;
+}
+
+.main-page .manu {
+  display: flex;
+  flex-direction: row;
+}
+
+.main-page .manu button {
+  width: 100px;
+  padding: 10px 0 10px 0;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.footer img {
+  width: 100%;
+  height: auto;
+  position: fixed;
+  bottom: 10px;
+}
+
+.main-page hr {
+  margin: 0;
+}
+
+.main-page .content hr {
+  margin: 0 2px 0 2px;
+}
