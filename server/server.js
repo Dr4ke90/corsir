@@ -43,6 +43,7 @@ const {
   getOneUser,
   updateUserByName,
   createUser,
+  deleteEmployee,
 } = require("./routes/ruteUtilizatori");
 const {
   getAllLocations,
@@ -63,13 +64,18 @@ const {
   updateOneMobilePhone,
   deleteOneMobilePhone,
 } = require("./routes/mobilePhonesRoutes");
-
+const path = require('path');
 
 // Middlewares
 app.use(express.json());
 app.use(cors());
-app.use(express.static("../client/build"));
+app.use(express.static(path.join(__dirname, "..", "client", "build")));
 app.use("/login", logIn);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+});
+
 
 // API SuppliChecklist
 app.get("/coral/it/necesar", getAllNecesar);
@@ -159,6 +165,8 @@ app.get("/coral/api/users/:username", getOneUser);
 app.put("/coral/api/users/:fisa", updateUser);
 
 app.post("/coral/api/users", createUser);
+
+app.post("/coral/api/users/:employeeID", deleteEmployee);
 
 // Pornirea serverului
 const port = process.env.PORT;

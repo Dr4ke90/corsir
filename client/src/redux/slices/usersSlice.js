@@ -29,6 +29,12 @@ const usersSlice = createSlice({
       state.allUsers = [...state.allUsers, action.payload];
     });
 
+    builder.addCase(deleteEmployee.fulfilled, (state, action) => {
+      state.allUsers = state.allUsers.filter(
+        (employee) => employee.fisa !== action.payload.fisa
+      );
+    });
+
     builder.addCase(updateUser.fulfilled, (state, action) => {
       const indexToUpdate = state.allUsers.findIndex(
         (item) => item.username === action.payload.username
@@ -70,15 +76,13 @@ export const logIn = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      // Gestionează erorile aici
       console.error("Eroare la autentificare:", error);
-      throw error; // Poți arunca eroarea sau să o gestionezi în alt mod
+      throw error;
     }
   }
 );
 
 export const updateUser = createAsyncThunk("users/updateUser", async (user) => {
-
   try {
     const response = await axios.put(
       `http://localhost:3000/coral/api/users/${user.fisa}`,
@@ -125,14 +129,44 @@ export const adaugaUser = createAsyncThunk("users/adaugaUser", async (user) => {
     console.log(
       response.status,
       response.data,
-      `Utilizatorul ${user.nume} a fost daugat cu succes!!`
+      `Utilizatorul ${user.nume} a fost adaugat cu succes!!`
     );
 
     return user;
   } catch (error) {
-    throw new Error("Eroare la actualizarea locatiei");
+    throw new Error("Eroare la actualizarea angajatului");
   }
 });
+
+export const deleteEmployee = createAsyncThunk(
+  "users/deleteEmployee",
+  async (employee) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/coral/api/users/${employee.fisa}`
+      );
+
+      if (response.status !== 200) {
+        console.log(
+          response.status,
+          response.data,
+          `ANgajatul ${employee.nume} nu a putut fi sters!!`
+        );
+        return;
+      }
+
+      console.log(
+        response.status,
+        response.data,
+        `Utilizatorul ${employee.nume} a fost sters cu succes!!`
+      );
+
+      return employee;
+    } catch (error) {
+      throw new Error(`Eroare la stergerea angajatului ${employee.nume}`);
+    }
+  }
+);
 
 export const { logOut } = usersSlice.actions;
 export default usersSlice.reducer;

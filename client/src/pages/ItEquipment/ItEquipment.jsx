@@ -18,7 +18,10 @@ function ItEquipment() {
 
   const echipament = useSelector((state) => state.echipament);
   const locations = useSelector((state) => state.locatii);
-  const data = useMemo(() => echipament.slice().reverse(),[echipament]);
+  const data = useMemo(
+    () => (Array.isArray(echipament) ? echipament.slice().reverse() : []),
+    [echipament]
+  );
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 

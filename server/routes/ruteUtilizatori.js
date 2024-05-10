@@ -124,10 +124,34 @@ const createUser = async (req, res) => {
   }
 };
 
+const deleteEmployee = async (req, res) => {
+  const employeeId = req.params;
+
+  try {
+    const db = await connectDB();
+    const collection = db.collection("users");
+
+    const response = await collection.deleteOne({ fisa: employeeId });
+
+    if (!response.acknowledged) {
+      console.log(`Angajatul ${employeeId} nu a putut fi sters.`);
+      return res.status(404).json(response);
+    }
+
+    if (response.modifiedCount !== 0) {
+      console.log(`Angajatul ${employeeId} a fost sters cu succes.`);
+      return res.status(200).json(response);
+    }
+  } catch (error) {
+    res.status(500).json("Eroare la adaugarea user-ului " + newUser.nume);
+  }
+};
+
 module.exports = {
   getAllUsers,
   logIn,
   updateUser,
   getOneUser,
-  createUser
+  createUser,
+  deleteEmployee
 };

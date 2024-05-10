@@ -141,7 +141,9 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "locatie",
       header: "Locatie",
       enableEditing: loggedUser.superuser ? true : false,
-      editSelectOptions: locations.map((item) => item.proiect),
+      editSelectOptions: Array.isArray(locations)
+        ? locations.map((item) => item.proiect)
+        : [],
       muiEditTextFieldProps: {
         select: true,
       },
