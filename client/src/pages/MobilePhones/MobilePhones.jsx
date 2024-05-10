@@ -18,7 +18,11 @@ function MobilePhones() {
 
   const mobilePhones = useSelector((state) => state.telefoane);
   const locations = useSelector((state) => state.locatii);
-  const data = useMemo(() => mobilePhones.slice().reverse(), [mobilePhones]);
+
+  const data = useMemo(
+    () => (Array.isArray(mobilePhones) ? mobilePhones.slice().reverse() : []),
+    [mobilePhones]
+  );
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 

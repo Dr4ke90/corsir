@@ -10,10 +10,14 @@ import ModalInventar from "./ModalInvenar";
 import { INV_INITIAL_STATE, INV_TABLE_COLUMNS } from "./inventarDatas";
 import ModalDetaliiInventar from "./ModalDetaliiInventar";
 
-const Inventory = ({departament}) => {
+const Inventory = ({ departament }) => {
   const dispatch = useDispatch();
   const inventar = useSelector((state) => state.inventar);
-  const data = useMemo(() => inventar.slice().reverse(), [inventar]);
+
+  const data = useMemo(
+    () => (Array.isArray(inventar) ? inventar.slice().reverse() : []),
+    [inventar]
+  );
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 

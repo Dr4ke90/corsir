@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import MuiTable from "../../components/MaterialUiTable/MuiTable";
-import { fetchAllUsers } from "../../redux/slices/usersSlice";
+import { deleteEmployee, fetchAllUsers } from "../../redux/slices/usersSlice";
 import ModalCreateUsers from "./EmployeesCreateModal";
 import { EMPLOYEES_MATERIAL_TABLE_COLUMNS } from "./Data/employeesMaterialTableColumns";
 import { EMPLOYEE_INITIAL_STATE } from "./Data/employeeInitialState";
@@ -9,8 +9,12 @@ import { EMPLOYEE_INITIAL_STATE } from "./Data/employeeInitialState";
 const Employees = () => {
   const dispatch = useDispatch();
   const utilizatori = useSelector((state) => state.users.allUsers);
+
   const data = useMemo(
-    () => utilizatori.filter((user) => user.username !== "coral"),
+    () =>
+      Array.isArray(utilizatori)
+        ? utilizatori.filter((user) => user.username !== "coral")
+        : [],
     [utilizatori]
   );
 
@@ -39,6 +43,10 @@ const Employees = () => {
     dispatch(fetchAllUsers());
   }, [dispatch]);
 
+  const handleDeleteEmployee = (employee) => {
+    dispatch(deleteEmployee(employee.fisa));
+  };
+
   const dialogProps = {
     data,
     selectedFile,
@@ -53,7 +61,7 @@ const Employees = () => {
     handleOpenCreateModal,
     handleOpenModalDetalii,
     setIsOnEditMode,
-    // handleDelete: handleRemoveFile,
+    handleDelete: handleDeleteEmployee,
   };
   return (
     <div className="inventar">

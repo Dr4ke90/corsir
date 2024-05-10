@@ -14,7 +14,11 @@ import { RETURN_FILE_INITIAL_STATE } from "./Data/returnFileInitialState";
 function Return() {
   const dispatch = useDispatch();
   const retur = useSelector((state) => state.retur);
-  const data = useMemo(() => retur.slice().reverse(), [retur]);
+
+  const data = useMemo(
+    () => (Array.isArray(retur) ? retur.slice().reverse() : []),
+    [retur]
+  );
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 

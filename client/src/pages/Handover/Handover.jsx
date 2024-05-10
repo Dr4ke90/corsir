@@ -15,7 +15,11 @@ const Handover = () => {
   const dispatch = useDispatch();
 
   const listaPredare = useSelector((state) => state.predare);
-  const data = useMemo(() => listaPredare.slice().reverse(), [listaPredare]);
+
+  const data = useMemo(
+    () => (Array.isArray(listaPredare) ? listaPredare.slice().reverse() : []),
+    [listaPredare]
+  );
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 

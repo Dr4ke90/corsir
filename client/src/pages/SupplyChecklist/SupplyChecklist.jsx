@@ -15,7 +15,11 @@ const SupplyChecklist = () => {
   const dispatch = useDispatch();
 
   const necesarState = useSelector((state) => state.necesar);
-  const data = useMemo(() => necesarState.slice().reverse(), [necesarState]);
+
+  const data = useMemo(
+    () => (Array.isArray(necesarState) ? necesarState.slice().reverse() : []),
+    [necesarState]
+  );
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
@@ -51,7 +55,7 @@ const SupplyChecklist = () => {
 
   const tableProps = {
     data,
-    columns : SUPPLY_CHECKLIST_MATERIAL_TABLE_COLUMNS(),
+    columns: SUPPLY_CHECKLIST_MATERIAL_TABLE_COLUMNS(),
     handleOpenCreateModal,
     handleOpenModalDetalii,
     handleUpdate: handleUpdateFile,
