@@ -106,7 +106,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
     },
     {
       accessorKey: "stare",
-      header: "Stare",
+      header: "Status",
       size: 80,
       grow: true,
       required: true,

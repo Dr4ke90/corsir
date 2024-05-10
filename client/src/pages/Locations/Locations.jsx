@@ -12,12 +12,7 @@ import { LOCATIONS_MATERIAL_TABLE_COLUMNS } from "./Data/locationsMaterialTableC
 const Locations = () => {
   const dispatch = useDispatch();
 
-  const locations = useSelector((state) => state.locatii);
-  const data = useMemo(
-    () => (Array.isArray(locations) ? locations.slice().reverse() : []),
-    [locations]
-  );
-
+  const data = useSelector((state) => state.locatii);
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 

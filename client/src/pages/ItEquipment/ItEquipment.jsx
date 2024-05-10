@@ -18,10 +18,7 @@ function ItEquipment() {
 
   const echipament = useSelector((state) => state.echipament);
   const locations = useSelector((state) => state.locatii);
-  const data = useMemo(
-    () => (Array.isArray(echipament) ? echipament.slice().reverse() : []),
-    [echipament]
-  );
+  const data = useMemo(() => echipament.slice().reverse(), [echipament]);
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
@@ -46,19 +43,22 @@ function ItEquipment() {
   }, [dispatch]);
 
   const handleUpdateEquipment = async ({ values, table }) => {
+    console.log(values);
+
     let pret;
-    if (typeof values.pret === "number") {
-      pret = parseInt(values.pret);
-    } else {
+    if (values.pret === "N/A") {
       pret = "";
+    } else {
+      pret = parseInt(values.pret);
     }
 
     dispatch(
       updateEchipament({
         ...values,
-        pret: parseInt(pret),
+        pret: pret,
       })
     );
+
     table.setEditingRow(null);
   };
 
