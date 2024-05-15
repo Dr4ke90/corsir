@@ -9,6 +9,7 @@ import Return from "../pages/Return/Return";
 import Handover from "../pages/Handover/Handover";
 import Employees from "../pages/Employees/Employees";
 import MobilePhones from "../pages/MobilePhones/MobilePhones";
+import WorkEquipment from "../pages/WorkEquipment/WorkEquipment";
 
 
 const AppRoutes = () => {
@@ -23,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/angajati" element={<Employees />} />
       <Route path="/locatii" element={<Locations />} />
       <Route path="/telefoane-it" element={<MobilePhones />} />
+      <Route path="/echipament-lucru-tehnic" element={<WorkEquipment />} />
     </Routes>
   );
 };

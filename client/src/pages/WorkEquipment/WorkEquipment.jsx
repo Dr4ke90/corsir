@@ -1,35 +1,34 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useMemo, useState } from "react";
-import {
-  updateEchipament,
-} from "../../redux/slices/echipSlice";
-import MuiTable from "../../components/MaterialUiTable/MuiTable";
+import { useEffect, useState } from "react";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import { fetchLocations } from "../../redux/slices/locationsSlice";
-import { MOBILE_PHONES_MATERIAL_TABLE_COLUMNS } from "./Data/mobilePhonesMaterialTableColumns";
-import { deleteMobilePhone, fetchMobilePhones, updateMobilePhones } from "../../redux/slices/mobilePhonesSlice";
-import AddMobilePhonesModall from "./MobilePhonesAddModal";
-import { MOBILE_PHONE_INITIAL_STATE } from "./Data/mobilePhoneInitialState";
-import MobilePhonesDetailsModal from "./MobilePhonesDetailsModal";
+import { WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS } from "./Data/workEquipmentMaterialTableColumns";
+import { WORK_EQUIPMENT_INITIAL_STATE } from "./Data/workEquipmentInitialState";
+import WorkEquipmentDetailsModal from "./WorkEquipmentDetailsModal";
+import WorkEquipmentAddModal from "./WorkEquipmentAddModal";
+import MuiTable from "../../components/MaterialUiTable/MuiTable";
+import {
+  deleteWorkEquipment,
+  fetchWorkEquipmentList,
+  updateWorkEquipment,
+} from "../../redux/slices/workEquipmentSlice";
 
-function MobilePhones() {
+function WorkEquipment() {
   const dispatch = useDispatch();
 
-  const mobilePhones = useSelector((state) => state.telefoane);
-  const locations = useSelector((state) => state.locatii);
+  const data = useSelector((state) => state.workEquipmentList);
 
-  const data = useMemo(
-    () => (Array.isArray(mobilePhones) ? mobilePhones.slice().reverse() : []),
-    [mobilePhones]
-  );
+  const locations = useSelector((state) => state.locatii);
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
   const [isOpenModalDetalii, setIsOpenModalDetalii] = useState(false);
 
-  const [selectedFile, setSelectedFile] = useState(MOBILE_PHONE_INITIAL_STATE);
+  const [selectedFile, setSelectedFile] = useState(
+    WORK_EQUIPMENT_INITIAL_STATE
+  );
 
-  const columns = MOBILE_PHONES_MATERIAL_TABLE_COLUMNS(locations)
+  const columns = WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS();
 
   const handleOpenCreateModal = () => {
     setIsOpenCreateModal(!isOpenCreateModal);
@@ -43,11 +42,11 @@ function MobilePhones() {
   };
 
   useEffect(() => {
-    dispatch(fetchMobilePhones());
+    dispatch(fetchWorkEquipmentList());
     dispatch(fetchLocations());
   }, [dispatch]);
 
-  const handleUpdateMobilePhone = async ({ values, table }) => {
+  const handleUpdateEquipment = async ({ values, table }) => {
     let pret;
     if (values.pret === "N/A") {
       pret = "";
@@ -56,7 +55,7 @@ function MobilePhones() {
     }
 
     dispatch(
-      updateMobilePhones({
+      updateWorkEquipment({
         ...values,
         pret: pret,
       })
@@ -65,7 +64,7 @@ function MobilePhones() {
   };
 
   const handleDeleteEquipment = (eq) => {
-    dispatch(deleteMobilePhone(eq.id));
+    dispatch(deleteWorkEquipment(eq.id));
   };
 
   const csvConfig = mkConfig({
@@ -75,7 +74,7 @@ function MobilePhones() {
   });
 
   const handleExportData = () => {
-    const csv = generateCsv(csvConfig)(mobilePhones);
+    const csv = generateCsv(csvConfig)(data);
     download(csvConfig)(csv);
   };
 
@@ -86,7 +85,7 @@ function MobilePhones() {
   };
 
   const dialogProps = {
-    data: mobilePhones,
+    data,
     handleOpenCreateModal,
   };
 
@@ -96,7 +95,7 @@ function MobilePhones() {
     handleOpenCreateModal,
     handleOpenModalDetalii,
     handleExportRows,
-    handleUpdate: handleUpdateMobilePhone,
+    handleUpdate: handleUpdateEquipment,
     handleExportAll: handleExportData,
     handleDelete: handleDeleteEquipment,
   };
@@ -105,12 +104,12 @@ function MobilePhones() {
     <div className="mobile-phones">
       <MuiTable props={tableProps} />
 
-      <AddMobilePhonesModall
+      <WorkEquipmentAddModal
         open={isOpenCreateModal}
         dialogProps={dialogProps}
       />
 
-      <MobilePhonesDetailsModal
+      <WorkEquipmentDetailsModal
         open={isOpenModalDetalii}
         file={selectedFile}
         handleClose={handleOpenModalDetalii}
@@ -119,4 +118,4 @@ function MobilePhones() {
   );
 }
 
-export default MobilePhones;
+export default WorkEquipment;

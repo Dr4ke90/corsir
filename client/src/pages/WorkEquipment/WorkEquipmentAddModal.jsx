@@ -5,49 +5,46 @@ import {
   Dialog,
   DialogActions,
   TextField,
+  MenuItem,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { INVOICE_INITIAL_STATE } from "../../data/invoiceInitialState";
-import { MOBILE_PHONE_INITIAL_STATE } from "./Data/mobilePhoneInitialState";
-import { MOBILE_PHONE_INPUT_LIST } from "./Data/mobilePhonesInputList";
-import { createNewCtmNumber } from "./Func/createNewCtm";
-import MobilePhonesAddModalTable from "./MobilePhonesAddModalTable";
-import { addMobilePhone } from "../../redux/slices/mobilePhonesSlice";
-import { mobilePhonesValidateInputs } from "./Func/mobilePhonesValidateInputs";
-import { phoneListRenumbering } from "./Func/phoneListRenumbering";
+import { WORK_EQUIPMENT_INITIAL_STATE } from "./Data/workEquipmentInitialState";
+import { WORK_EQUIPMENT_INPUT_LIST } from "./Data/workEquipmentInputList";
 import { invoiceValidateInputs } from "../../utils/invoiceValidateInputs";
+import WorkEquipmentAddModalTable from "./WorkEquipmentAddModalTable";
+import { createNewId } from "./Func/createNewId";
+import {
+  addWorkEquipment,
+  updateWorkEquipment,
+} from "../../redux/slices/workEquipmentSlice";
+import { workEquipmentValidateInputs } from "./Func/workEquipmentValidateInputs";
+import { WORK_EQUIPMENT_TYPES } from "./Data/workEquipmentTypes";
 
-
-const AddMobilePhonesModall = ({ open, dialogProps }) => {
-  const { data, handleOpenCreateModal } = dialogProps;
+const WorkEquipmentAddModal = ({ open, dialogProps }) => {
+  const { handleOpenCreateModal, data } = dialogProps;
 
   const dispatch = useDispatch();
 
-  const [newPhoneList, setNewPhoneList] = useState([]);
+  const [workEquipmentList, setWorkEquipmentList] = useState([]);
 
-  const [mobilePhoneState, setMobilePhoneState] = useState(
-    MOBILE_PHONE_INITIAL_STATE
+  const [workEquipmentState, setWorkEquipmentState] = useState(
+    WORK_EQUIPMENT_INITIAL_STATE
   );
+
+  const [tip, setTip] = useState("");
 
   const [infoInvoiceState, setInfoInvoiceState] = useState(
     INVOICE_INITIAL_STATE
   );
-  const [cantitate, setCantitate] = useState("");
-  const [renumberingStartNr, setRenumberingStartNr] = useState(0);
   const [validationErrors, setValidationErrors] = useState({});
 
-  useEffect(() => {
-    if (newPhoneList.length > 0) {
-      const initialStartNr = parseInt(newPhoneList[0].id.substring(3));
-      setRenumberingStartNr(initialStartNr);
-    }
-  }, [newPhoneList]);
-
   const handleAdaugaEchipament = () => {
-    const newValidationErrors = mobilePhonesValidateInputs({
-      ...mobilePhoneState,
+    const newValidationErrors = workEquipmentValidateInputs({
+      ...workEquipmentState,
       ...infoInvoiceState,
+      tip,
     });
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
@@ -56,73 +53,41 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
     }
     setValidationErrors({});
 
-    const newItems = [];
-    let newCit;
-    let newMobilePhone;
-    if (cantitate !== "") {
-      for (let i = 0; i < cantitate; i++) {
-        newCit = createNewCtmNumber(data, [...newPhoneList, ...newItems]);
+    setWorkEquipmentList((prev) => {
+      return [
+        ...prev,
+        {
+          ...workEquipmentState,
+          ...infoInvoiceState,
+          id: createNewId({ ...workEquipmentState, tip: tip }),
+          tip: tip,
+          stare: "Nou",
+          locatie: "Coral Bussiness Center",
+          persoana: "Andreea Iorgulescu",
+        },
+      ];
+    });
 
-        newMobilePhone = createEchipament(newCit);
-        newItems.push(newMobilePhone);
-      }
-    } else {
-      newCit = createNewCtmNumber(data, [...newPhoneList, ...newItems]);
-
-      newMobilePhone = createEchipament(newCit);
-      newItems.push(newMobilePhone);
-    }
-
-    setNewPhoneList([...newPhoneList, ...newItems]);
-    resetEchipament();
+    resetState();
   };
 
-  const createEchipament = (id) => {
-    return {
-      ...mobilePhoneState,
-      ...infoInvoiceState,
-      id: id,
-      tip: "Telefon",
-      stare: "Nou",
-      locatie: "Coral Bussiness Center",
-      persoana: "Ana Maria Szabo",
-    };
-  };
-
-  const resetEchipament = () => {
-    setMobilePhoneState(MOBILE_PHONE_INITIAL_STATE);
-    setCantitate("");
+  const resetState = () => {
+    setWorkEquipmentState(WORK_EQUIPMENT_INITIAL_STATE);
+    setTip("");
   };
 
   const handleRemoveItem = (row) => {
-    const updatedList = newPhoneList.filter(
+    const updatedList = workEquipmentList.filter(
       (item) => item.id !== row.original.id
     );
 
-    const renumberedList = phoneListRenumbering(
-      updatedList,
-      renumberingStartNr
-    );
-
-    setNewPhoneList(renumberedList);
+    setWorkEquipmentList(updatedList);
   };
 
-  const handleEditEquipment = (editedItem) => {
-    setNewPhoneList((prevEquipmentList) => {
-      const updatedList = prevEquipmentList.map((item) => {
-        if (item.id === editedItem.id) {
-          return { ...item, ...editedItem };
-        }
-        return item;
-      });
-      return updatedList;
-    });
-  };
-
-  const handleChangeMobilePhone = (e) => {
+  const handleChangeWorkEquipment = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setMobilePhoneState((prev) => ({
+    setWorkEquipmentState((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -137,7 +102,12 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
     }));
   };
 
-  const handleAddMobilePhone = () => {
+  const handleChangeTip = (e) => {
+    e.preventDefault();
+    setTip(e.target.value);
+  };
+
+  const handleAddWorkEquipment = () => {
     const newValidationErrors = invoiceValidateInputs({
       ...infoInvoiceState,
     });
@@ -148,20 +118,36 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
     }
     setValidationErrors({});
 
-    newPhoneList.forEach((phone) => dispatch(addMobilePhone(phone)));
+    workEquipmentList.forEach((equipment) => {
+      const matchingData = data.find((item) => item.id === equipment.id);
+      if (matchingData) {
+        const updatedQuantity =
+          parseInt(matchingData.cantitate) + parseInt(equipment.cantitate);
+        dispatch(
+          updateWorkEquipment({
+            ...matchingData,
+            cantitate: updatedQuantity.toString(),
+            intrari: [...matchingData.intrari, infoInvoiceState],
+          })
+        );
+      } else {
+        dispatch(
+          addWorkEquipment({
+            ...infoInvoiceState,
+            ...equipment,
+            intrari: [infoInvoiceState],
+          })
+        );
+      }
+    });
 
     setInfoInvoiceState(INVOICE_INITIAL_STATE);
-    setNewPhoneList([]);
+    setWorkEquipmentList([]);
     handleOpenCreateModal();
-  };
-
-  const handleChangeCantitate = (e) => {
-    setCantitate(e.target.value);
   };
 
   const dialogTableProps = {
     handleRemoveItem,
-    handleEditEquipment,
   };
 
   return (
@@ -184,7 +170,7 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
             gap: "5px",
           }}
         >
-          {MOBILE_PHONE_INPUT_LIST.slice(3).map((name) => (
+          {WORK_EQUIPMENT_INPUT_LIST.slice(3).map((name) => (
             <TextField
               key={name}
               name={name}
@@ -213,21 +199,43 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
             />
           ))}
           <hr />
-
-          {MOBILE_PHONE_INPUT_LIST.slice(0, 3).map((name) => (
+          {WORK_EQUIPMENT_INPUT_LIST.slice(0, 1).map((name) => (
             <TextField
               key={name}
               name={name}
               variant="standard"
               label={name.slice(0, 1).toUpperCase() + name.slice(1)}
-              onChange={
-                name !== "cantitate"
-                  ? handleChangeMobilePhone
-                  : handleChangeCantitate
-              }
-              value={name !== "cantitate" ? mobilePhoneState[name] : cantitate}
+              onChange={handleChangeTip}
+              value={tip}
               size="small"
-              required={name === "serie" || name === "cantitate" ? false : true}
+              select
+              required={true}
+              error={!!validationErrors?.tip}
+              helperText={validationErrors?.tip}
+              onFocus={() =>
+                setValidationErrors({
+                  ...validationErrors,
+                  tip: undefined,
+                })
+              }
+            >
+              {WORK_EQUIPMENT_TYPES.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          ))}
+          {WORK_EQUIPMENT_INPUT_LIST.slice(1, 3).map((name) => (
+            <TextField
+              key={name}
+              name={name}
+              variant="standard"
+              label={name.slice(0, 1).toUpperCase() + name.slice(1)}
+              onChange={handleChangeWorkEquipment}
+              value={workEquipmentState[name]}
+              size="small"
+              required={true}
               error={!!validationErrors[name]}
               helperText={validationErrors[name]}
               onFocus={() =>
@@ -247,8 +255,8 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
             Adauga
           </Button>
         </Box>
-        <MobilePhonesAddModalTable
-          data={newPhoneList}
+        <WorkEquipmentAddModalTable
+          data={workEquipmentList}
           dialogTableProps={dialogTableProps}
         />
       </DialogContent>
@@ -265,7 +273,7 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
           variant="contained"
           color="success"
           sx={{ width: "50px" }}
-          onClick={() => handleAddMobilePhone(newPhoneList)}
+          onClick={() => handleAddWorkEquipment(workEquipmentList)}
         >
           Save
         </Button>
@@ -274,4 +282,4 @@ const AddMobilePhonesModall = ({ open, dialogProps }) => {
   );
 };
 
-export default AddMobilePhonesModall;
+export default WorkEquipmentAddModal;

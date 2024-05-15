@@ -26,10 +26,14 @@ import { fetchAllUsers, updateUser } from "../../redux/slices/usersSlice";
 import { IT_EQUIPMENT_INITIAL_STATE } from "../ItEquipment/Data/itEquipmentInitialState";
 import { HANDOVER_FILE_INITIAL_STATE } from "./Data/handoverFileInitialState";
 import {
-  addMobilePhone,
   fetchMobilePhones,
   updateMobilePhones,
 } from "../../redux/slices/mobilePhonesSlice";
+import {
+  fetchWorkEquipmentList,
+  updateWorkEquipment,
+} from "../../redux/slices/workEquipmentSlice";
+import { WORK_EQUIPMENT_TYPES } from "../WorkEquipment/Data/workEquipmentTypes";
 
 const HandoverCreateModal = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
@@ -40,6 +44,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
   const echipament = useSelector((state) => state.echipament);
   const angajati = useSelector((state) => state.users.allUsers);
   const locatii = useSelector((state) => state.locatii);
+  const workEquipment = useSelector((state) => state.workEquipmentList);
 
   const user = useSelector((state) => state.users.loggedUser);
 
@@ -55,6 +60,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
     dispatch(fetchLocations());
     dispatch(fetchAllUsers());
     dispatch(fetchMobilePhones());
+    dispatch(fetchWorkEquipmentList());
   }, [dispatch]);
 
   useEffect(() => {
@@ -68,14 +74,14 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
   useEffect(() => {
     setAddedEquipment(() => {
-      const combinedList = [...echipament, ...mobilePhones];
+      const combinedList = [...echipament, ...mobilePhones, ...workEquipment];
 
       const updatedList = combinedList.filter((eq) => {
-        return fisa.echipament.some((cit) => cit === eq.cit);
+        return fisa.echipament.some((id) => id === eq.id);
       });
       return [...updatedList];
     });
-  }, [fisa.echipament, echipament, mobilePhones]);
+  }, [fisa.echipament, echipament, mobilePhones, workEquipment]);
 
   useEffect(() => {
     if (fisa.primitor !== "") {
@@ -101,11 +107,11 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
     );
 
     if (response.meta.requestStatus === "fulfilled") {
-      fisa.echipament.forEach((cit) => {
+      fisa.echipament.forEach((id) => {
         const combinedEquipment = [...echipament, ...mobilePhones];
 
         const filteredEquipments = combinedEquipment.filter(
-          (item) => item.cit === cit
+          (item) => item.id === id
         );
 
         filteredEquipments.forEach((eq) => {
@@ -118,6 +124,8 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
           if (eq.tip === "Telefon") {
             dispatch(updateMobilePhones(eqUpdate));
+          } else if (WORK_EQUIPMENT_TYPES.includes(eq.tip)) {
+            dispatch(updateWorkEquipment(eqUpdate));
           } else {
             dispatch(updateEchipament(eqUpdate));
           }
@@ -159,16 +167,16 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
   const handleSelectionChange = (event, newValue) => {
     if (newValue === null) return;
     setSelectedCit(
-      [...echipament, ...mobilePhones].find((item) => item.cit === newValue)
+      [...echipament, ...mobilePhones].find((item) => item.id === newValue)
     );
   };
 
   const handleAdaugaEchipament = () => {
     setFisa((prev) => {
-      const findItem = prev.echipament.find((cit) => cit === selectedCit.cit);
+      const findItem = prev.echipament.find((id) => id === selectedCit.id);
       if (findItem) return prev;
 
-      return { ...prev, echipament: [...prev.echipament, selectedCit.cit] };
+      return { ...prev, echipament: [...prev.echipament, selectedCit.id] };
     });
   };
 
@@ -176,7 +184,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
     setFisa((prev) => {
       return {
         ...prev,
-        echipament: prev.echipament.filter((item) => item.cit !== itemID),
+        echipament: prev.echipament.filter((item) => item.id !== itemID),
       };
     });
   };
@@ -314,9 +322,9 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
                 <Autocomplete
                   disablePortal
                   sx={{ marginTop: "5px" }}
-                  options={[...echipament, ...mobilePhones].map((eq) => eq.cit)}
+                  options={[...echipament, ...mobilePhones].map((eq) => eq.id)}
                   renderInput={(params) => (
-                    <TextField {...params} label="CIT" />
+                    <TextField {...params} label="ID" />
                   )}
                   onChange={handleSelectionChange}
                   size="small"

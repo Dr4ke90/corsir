@@ -1,7 +1,7 @@
 export const PREDARE_DIALOG_TABLE_COLUMNS = () => [
   {
-    accessorKey: "cit",
-    header: "CIT",
+    accessorKey: "id",
+    header: "ID",
     size: 40,
     grow: false,
     enableEditing: false,

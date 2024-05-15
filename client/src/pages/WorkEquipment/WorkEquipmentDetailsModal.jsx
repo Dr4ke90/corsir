@@ -12,11 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import DetailsTable from "../../components/DetailsTable/DetailsTable";
 import { fetchFisePredare } from "../../redux/slices/predareSlice";
 import { fetchFiseRetur } from "../../redux/slices/returSlice";
-import { MOBILE_PHONES_DETAILS_MODAL_PV_COLUMNS } from "./Data/mobilePhonesDetailsModalPvColumns";
 import { INV_TABLE_COLUMNS } from "../ItInventory/inventarDatas";
 import Notice from "../../components/Notice/Noice";
+import { WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS } from "./Data/workEquipmentDetailsModalPvColumns";
 
-const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
+const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
   const dispatch = useDispatch();
 
   const handover = useSelector((state) => state.predare);
@@ -34,13 +34,11 @@ const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
       const combinedPV = [...handover, ...retur];
 
       const updatedList = combinedPV.filter((p) => {
-        return file.pv.some((id) => id === p.fisa);
+        return file.pv.some((cit) => cit === p.fisa);
       });
       return [...updatedList];
     });
   }, [handover, retur, file.pv]);
-
-  
 
   return (
     <Dialog open={open} maxWidth="lg" fullWidth={true}>
@@ -96,7 +94,7 @@ const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
           <DialogTitle> Informatii procese verbale </DialogTitle>
           <DetailsTable
             data={pv}
-            columns={MOBILE_PHONES_DETAILS_MODAL_PV_COLUMNS}
+            columns={WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS}
           />
         </Box>
         <hr />
@@ -125,4 +123,4 @@ const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
   );
 };
 
-export default MobilePhonesDetailsModal;
+export default WorkEquipmentDetailsModal;

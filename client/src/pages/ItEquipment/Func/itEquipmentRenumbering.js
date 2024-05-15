@@ -7,7 +7,7 @@ export const equipmentListRenumbering = (phoneList, startNr) => {
     const newCitNr = startNr + i;
     const paddedNr = newCitNr.toString().padStart(3, "0");
     const newCit = "CIT" + paddedNr;
-    phoneList[i].cit = newCit;
+    phoneList[i].id = newCit;
   }
 
   return phoneList;

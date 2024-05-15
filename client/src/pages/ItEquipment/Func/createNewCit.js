@@ -5,7 +5,7 @@ export const createNewCit = (fullEqList, usedEq) => {
     if (equipment.length === 0) return;
   
     const lastCit =
-      parseInt(equipment[equipment.length - 1].cit.substring(3)) + 1;
+      parseInt(equipment[equipment.length - 1].id.substring(3)) + 1;
     const paddedNr = lastCit.toString().padStart(3, "0");
     newCit = "CIT" + paddedNr;
   

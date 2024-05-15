@@ -1,4 +1,4 @@
-export const RETUR_COLOANE_MODAL_CREARE = () => [
+export const WORK_EQUIPMENT_ADD_MODAL_TABLE_COLUMNS = () => [
   {
     accessorKey: "id",
     header: "ID",
@@ -14,15 +14,15 @@ export const RETUR_COLOANE_MODAL_CREARE = () => [
     enableEditing: false,
   },
   {
-    accessorKey: "model", 
-    header: "Model",
+    accessorKey: "marime",
+    header: "Marime",
     size: 220,
-    grow: true,
     enableEditing: false,
+    grow: true,
   },
   {
-    accessorKey: "serie",
-    header: "Serie",
+    accessorKey: "cantitate",
+    header: "Cantitate",
     size: 130,
     grow: true,
     enableEditing: false,

@@ -1,9 +1,9 @@
 const connectDB = require("../db");
 
-const getAllEchipament = async (req, res) => {
+const getAllWorkEquipament = async (req, res) => {
   try {
     const db = await connectDB();
-    const collection = db.collection("echipament_it");
+    const collection = db.collection("echipament_lucru");
 
     const echipament = await collection.find({}).toArray();
 
@@ -16,22 +16,22 @@ const getAllEchipament = async (req, res) => {
   }
 };
 
-const postOneEchipoamentFile = async (req, res) => {
+const postWorkEquipment = async (req, res) => {
   const echipament = req.body;
 
   try {
     const db = await connectDB();
-    const collection = db.collection("echipament_it");
+    const collection = db.collection("echipament_lucru");
 
     const response = await collection.insertOne(echipament);
 
     if (!response.acknowledged) {
-      console.log("Fisa nu a putut fi adaugata.");
+      console.log("Echipamentul nu a putut fi adaugat.");
       return res.status(404).json(response);
     }
 
     console.log(
-      `Echipamentul cu nr ${echipament.id} a fost adaugat cu succes`
+      `Echipamentul ${echipament.id} a fost adaugat cu succes`
     );
     return res.status(200).json(response);
   } catch (error) {
@@ -41,12 +41,12 @@ const postOneEchipoamentFile = async (req, res) => {
   }
 };
 
-const getOneEchipamentFile = async (req, res) => {
+const getOneWorkEquipment = async (req, res) => {
   const { id } = req.params;
 
   try {
     const db = await connectDB();
-    const collection = db.collection("echipament_it");
+    const collection = db.collection("echipament_lucru");
 
     const response = await collection.findOne(
       { id: id },
@@ -69,13 +69,13 @@ const getOneEchipamentFile = async (req, res) => {
   }
 };
 
-const updateEchipamentFile = async (req, res) => {
+const updateWorkEquipment = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
   try {
     const db = await connectDB();
-    const collection = db.collection("echipament_it");
+    const collection = db.collection("echipament_lucru");
 
     const response = await collection.updateOne(
       { id: id },
@@ -97,17 +97,17 @@ const updateEchipamentFile = async (req, res) => {
   }
 };
 
-const deleteOneEquipment = async (req, res) => {
+const deleteWorkEquipment = async (req, res) => {
   const { id } = req.params;
 
   try {
     const db = await connectDB();
-    const collection = db.collection("echipament_it");
+    const collection = db.collection("echipament_lucru");
 
     const response = await collection.deleteOne({ id: id });
 
     if (!response.acknowledged) {
-      console.log(`Echipamentul cu nr ${id} nu a fost găsit.`);
+      console.log(`Echipamentul ${id} nu a fost găsit.`);
       return res.status(404).json(response);
     }
 
@@ -121,9 +121,9 @@ const deleteOneEquipment = async (req, res) => {
 };
 
 module.exports = {
-  getAllEchipament,
-  getOneEchipamentFile,
-  updateEchipamentFile,
-  postOneEchipoamentFile,
-  deleteOneEquipment,
+  getAllWorkEquipament,
+  getOneWorkEquipment,
+  updateWorkEquipment,
+  postWorkEquipment,
+  deleteWorkEquipment,
 };

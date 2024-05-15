@@ -1,7 +1,7 @@
 export const MOBILE_PHONE_ADD_MODAL_TABLE_COLUMNS = (handleOnChangeEditedItem) => [
     {
-      accessorKey: "cit",
-      header: "CIT",
+      accessorKey: "id",
+      header: "ID",
       size: 40,
       grow: false,
       enableEditing: false,

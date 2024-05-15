@@ -31,25 +31,25 @@ const postOneMobilePhone = async (req, res) => {
     }
 
     console.log(
-      `Telefonul ${phone.cit} a fost adaugat cu succes`
+      `Telefonul ${phone.id} a fost adaugat cu succes`
     );
     return res.status(200).json(response);
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Eroare la adăugarea telefonului" + phone.cit });
+      .json({ error: "Eroare la adăugarea telefonului" + phone.id });
   }
 };
 
 const getOneMobilePhone = async (req, res) => {
-  const { cit } = req.params;
+  const { id } = req.params;
 
   try {
     const db = await connectDB();
     const collection = db.collection("telefoane");
 
     const response = await collection.findOne(
-      { cit: cit },
+      { id: id },
       { returnDocument: "after" }
     );
 
@@ -58,7 +58,7 @@ const getOneMobilePhone = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: `Telefonul ${cit} a fost preluat cu succes`,
+      message: `Telefonul ${id} a fost preluat cu succes`,
       file: response,
     });
   } catch (error) {
@@ -70,7 +70,7 @@ const getOneMobilePhone = async (req, res) => {
 };
 
 const updateOneMobilePhone = async (req, res) => {
-  const { cit } = req.params;
+  const { id } = req.params;
   const updates = req.body;
 
   try {
@@ -78,17 +78,17 @@ const updateOneMobilePhone = async (req, res) => {
     const collection = db.collection("telefoane");
 
     const response = await collection.updateOne(
-      { cit: cit },
+      { id: id },
       { $set: updates }
     );
 
     if (response.matchedCount === 0) {
-      console.log(`Telefonul ${cit} nu a fost găsit.`);
+      console.log(`Telefonul ${id} nu a fost găsit.`);
       return res.status(404).json(response);
     }
 
     if (response.modifiedCount !== 0) {
-      console.log(`Telefonul ${cit} a fost actualizat cu succes.`);
+      console.log(`Telefonul ${id} a fost actualizat cu succes.`);
       res.status(200).json(response);
     }
   } catch (error) {
@@ -98,25 +98,25 @@ const updateOneMobilePhone = async (req, res) => {
 };
 
 const deleteOneMobilePhone = async (req, res) => {
-  const { cit } = req.params;
+  const { id } = req.params;
 
   try {
     const db = await connectDB();
     const collection = db.collection("telefoane");
 
-    const response = await collection.deleteOne({ cit: cit });
+    const response = await collection.deleteOne({ id: id });
 
     if (!response.acknowledged) {
-      console.log(`Telefonul ${cit} nu a fost găsit.`);
+      console.log(`Telefonul ${id} nu a fost găsit.`);
       return res.status(404).json(response);
     }
 
-    console.log(`Telefonul ${cit} a fost sters cu succes.`);
+    console.log(`Telefonul ${id} a fost sters cu succes.`);
     return res.status(200).json(response);
   } catch (error) {
     res
       .status(500)
-      .json({ error: `Eroare la stergerea telefonului ${cit}` });
+      .json({ error: `Eroare la stergerea telefonului ${id}` });
   }
 };
 

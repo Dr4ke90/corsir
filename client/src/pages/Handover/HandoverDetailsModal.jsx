@@ -27,7 +27,7 @@ const HandoverDetailsModal = ({ open, file, handleClose }) => {
   useEffect(() => {
     if (file) {
       const addedEq = equipment.filter((item) =>
-        file.echipament.includes(item.cit)
+        file.echipament.includes(item.id)
       );
 
       setEqList(addedEq);

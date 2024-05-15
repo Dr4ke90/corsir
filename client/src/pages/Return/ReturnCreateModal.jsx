@@ -66,7 +66,7 @@ const ModalRetur = ({ open, dialogProps }) => {
   useEffect(() => {
     setAddedEquipment(() => {
       const updatedList = echipament.filter((eq) => {
-        return fisa.echipament.some((cit) => cit === eq.cit);
+        return fisa.echipament.some((id) => id === eq.id);
       });
       return [...updatedList];
     });
@@ -101,15 +101,15 @@ const ModalRetur = ({ open, dialogProps }) => {
 
   const handleCitChange = (event, newValue) => {
     if (newValue === null) return;
-    setSelectedCit(echipament.find((item) => item.cit === newValue));
+    setSelectedCit(echipament.find((item) => item.id === newValue));
   };
 
   const handleAdaugaEchipament = () => {
     setFisa((prev) => {
-      const findItem = prev.echipament.find((cit) => cit === selectedCit.cit);
+      const findItem = prev.echipament.find((id) => id === selectedCit.id);
       if (findItem) return prev;
 
-      return { ...prev, echipament: [...prev.echipament, selectedCit.cit] };
+      return { ...prev, echipament: [...prev.echipament, selectedCit.id] };
     });
   };
 
@@ -130,9 +130,9 @@ const ModalRetur = ({ open, dialogProps }) => {
     if (response.meta.requestStatus === "fulfilled") {
       const combineEquipment = [...echipament, ...mobilePhones];
 
-      fisa.echipament.forEach((cit) => {
+      fisa.echipament.forEach((id) => {
         const filteredEquipments = combineEquipment.filter(
-          (item) => item.cit === cit
+          (item) => item.id === id
         );
 
         filteredEquipments.forEach((item) => {
@@ -318,9 +318,9 @@ const ModalRetur = ({ open, dialogProps }) => {
                   disablePortal
                   id="combo-box-demo"
                   sx={{ marginTop: "5px" }}
-                  options={echipament.map((item) => item.cit)}
+                  options={echipament.map((item) => item.id)}
                   renderInput={(params) => (
-                    <TextField {...params} label="CIT" />
+                    <TextField {...params} label="ID" />
                   )}
                   onChange={handleCitChange}
                   size="small"

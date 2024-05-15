@@ -55,7 +55,7 @@ const ModalInventar = ({ open, dialogProps }) => {
 
     const filteredEquipment = equipment
       .filter((eq) => eq.locatie === selectedLocation)
-      .map((eq) => eq.cit);
+      .map((eq) => eq.id);
 
     if (filteredEquipment.length === 0) {
       setInventoryState({ ...inventoryState, echipament: [] });
@@ -87,14 +87,14 @@ const ModalInventar = ({ open, dialogProps }) => {
 
   const handleSelectionChange = (event, newValue) => {
     if (newValue === null) return;
-    setSelectedCit(equipment.find((item) => item.cit === newValue));
+    setSelectedCit(equipment.find((item) => item.id === newValue));
   };
 
   const handleAdaugaEchipament = () => {
     setInventoryState((prev) => {
       return {
         ...prev,
-        echipament: [...prev.echipament, selectedCit.cit],
+        echipament: [...prev.echipament, selectedCit.id],
       };
     });
   };
@@ -220,9 +220,9 @@ const ModalInventar = ({ open, dialogProps }) => {
                   disablePortal
                   id="combo-box-demo"
                   sx={{ marginTop: "5px" }}
-                  options={equipment.map((eq) => eq.cit)}
+                  options={equipment.map((eq) => eq.id)}
                   renderInput={(params) => (
-                    <TextField {...params} label="CIT" />
+                    <TextField {...params} label="ID" />
                   )}
                   onChange={handleSelectionChange}
                   size="small"

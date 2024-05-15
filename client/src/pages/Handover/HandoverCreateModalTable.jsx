@@ -47,7 +47,7 @@ const HandoverCreateModalTable = ({ dialogTableProps }) => {
       return (
         <Box sx={{ display: "flex", gap: "0.1rem" }}>
           <Tooltip title="Delete">
-            <IconButton onClick={() => handleRemoveEquipment(row.original.cit)}>
+            <IconButton onClick={() => handleRemoveEquipment(row.original.id)}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>

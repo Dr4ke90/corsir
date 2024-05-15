@@ -22,7 +22,7 @@ const InventarDialogTable = ({ dialogTableProps }) => {
 
   useEffect(() => {
     const updatedList = dbEquipmentList.filter((item) => {
-      return data.some((cit) => cit === item.cit);
+      return data.some((id) => id === item.id);
     });
     if (data.length !== 0) {
       setFindedEquipment(updatedList);

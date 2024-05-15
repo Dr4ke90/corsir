@@ -8,8 +8,8 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
 
   return [
     {
-      accessorKey: "cit",
-      header: "CIT",
+      accessorKey: "id",
+      header: "ID",
       size: 30,
       enableEditing: false,
       grow: false,

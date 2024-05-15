@@ -41,7 +41,7 @@ const ModalEquipment = ({ open, dialogProps }) => {
 
   useEffect(() => {
     if (newEquipmentList.length > 0) {
-      const initialStartNr = parseInt(newEquipmentList[0].cit.substring(3));
+      const initialStartNr = parseInt(newEquipmentList[0].id.substring(3));
       setRenumberingStartNr(initialStartNr);
     }
   }, [newEquipmentList]);
@@ -79,11 +79,11 @@ const ModalEquipment = ({ open, dialogProps }) => {
     resetEchipament();
   };
 
-  const createEchipament = (cit) => {
+  const createEchipament = (id) => {
     return {
       ...equipState,
       ...infoInvoiceState,
-      cit: cit,
+      id: id,
       tip: tip,
       stare: "Nou",
       locatie: "Coral Bussiness Center",
@@ -101,7 +101,7 @@ const ModalEquipment = ({ open, dialogProps }) => {
 
   const handleRemoveItem = (row) => {
     const updatedList = newEquipmentList.filter(
-      (item) => item.cit !== row.original.cit
+      (item) => item.id !== row.original.id
     );
     const renumberedList = equipmentListRenumbering(
       updatedList,
@@ -113,7 +113,7 @@ const ModalEquipment = ({ open, dialogProps }) => {
   const handleEditEquipment = (editedItem) => {
     setNewEquipmentList((prevEquipmentList) => {
       const updatedList = prevEquipmentList.map((item) => {
-        if (item.cit === editedItem.cit) {
+        if (item.id === editedItem.id) {
           return { ...item, ...editedItem };
         }
         return item;

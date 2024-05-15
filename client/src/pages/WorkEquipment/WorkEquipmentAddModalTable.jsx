@@ -5,18 +5,16 @@ import {
 } from "material-react-table";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton, Tooltip } from "@mui/material";
-import { RETUR_COLOANE_MODAL_CREARE } from "./Data/returnCreateModalTableColumns";
+import { WORK_EQUIPMENT_ADD_MODAL_TABLE_COLUMNS } from "./Data/workEquipmentAddModalTableColumns";
 
-const ReturDialogTable = ({ data }) => {
-  const { addedEquipment, handleRemoveEquipment } = data;
-
+const WorkEquipmentAddModalTable = ({ data, dialogTableProps }) => {
   const [rowSelection, setRowSelection] = useState("");
 
-
+  const { handleRemoveItem } = dialogTableProps;
 
   const table = useMaterialReactTable({
-    columns: RETUR_COLOANE_MODAL_CREARE(),
-    data: addedEquipment,
+    columns: WORK_EQUIPMENT_ADD_MODAL_TABLE_COLUMNS(),
+    data,
     enableColumnActions: false,
     enableColumnFilters: false,
     enablePagination: false,
@@ -49,7 +47,7 @@ const ReturDialogTable = ({ data }) => {
       return (
         <Box sx={{ display: "flex", gap: "0.1rem" }}>
           <Tooltip title="Delete">
-            <IconButton onClick={() => handleRemoveEquipment(row.original.id)}>
+            <IconButton onClick={() => handleRemoveItem(row)}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -67,4 +65,4 @@ const ReturDialogTable = ({ data }) => {
   return <MaterialReactTable table={table} />;
 };
 
-export default ReturDialogTable;
+export default WorkEquipmentAddModalTable;

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import { MOBILE_PHONES_STATE_SELECTION } from "./mobilePhonesStateSelection";
+import { WORK_EQUIPMENT_STATE_SELECTION } from "./workEquipmentStateSelection";
 
-export const MOBILE_PHONES_MATERIAL_TABLE_COLUMNS = (locations) => {
+export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
   const loggedUser = useSelector((state) => state.users.loggedUser);
 
   return [
@@ -20,8 +20,8 @@ export const MOBILE_PHONES_MATERIAL_TABLE_COLUMNS = (locations) => {
     },
 
     {
-      accessorKey: "model",
-      header: "Model",
+      accessorKey: "tip",
+      header: "Tip",
       size: 180,
       grow: true,
       enableEditing: loggedUser.superuser ? true : false,
@@ -33,8 +33,8 @@ export const MOBILE_PHONES_MATERIAL_TABLE_COLUMNS = (locations) => {
       },
     },
     {
-      accessorKey: "serie",
-      header: "IMEI",
+      accessorKey: "marime",
+      header: "Marime",
       size: 100,
       grow: true,
       enableEditing: loggedUser.superuser ? true : false,
@@ -46,8 +46,8 @@ export const MOBILE_PHONES_MATERIAL_TABLE_COLUMNS = (locations) => {
       },
     },
     {
-      accessorKey: "phoneNr",
-      header: "Nr Tel.",
+      accessorKey: "cantitate",
+      header: "Cantitate",
       size: 100,
       grow: true,
       enableEditing: true,
@@ -66,7 +66,7 @@ export const MOBILE_PHONES_MATERIAL_TABLE_COLUMNS = (locations) => {
       required: true,
       enableEditing: true,
 
-      editSelectOptions: MOBILE_PHONES_STATE_SELECTION,
+      editSelectOptions: WORK_EQUIPMENT_STATE_SELECTION,
       muiEditTextFieldProps: {
         select: true,
       },
@@ -77,28 +77,12 @@ export const MOBILE_PHONES_MATERIAL_TABLE_COLUMNS = (locations) => {
         sx: { justifyContent: "flex-start" },
       },
     },
-
     {
-      accessorKey: "persoana",
-      header: "Persoana",
-      enableEditing: loggedUser.superuser ? true : false,
-      size: 80,
-      Edit: () => null,
-      enableClickToCopy: true,
-      muiCopyButtonProps: {
-        fullWidth: true,
-        // startIcon: <ContentCopy />,
-        sx: { justifyContent: "flex-start" },
-      },
-    },
-    {
-      accessorKey: "locatie",
-      header: "Locatie",
-      enableEditing: loggedUser.superuser ? true : false,
-      editSelectOptions: locations.map((item) => item.proiect),
-      muiEditTextFieldProps: {
-        select: true,
-      },
+      accessorKey: "achizitie",
+      header: "Achizitie",
+      size: 100,
+      grow: true,
+      enableEditing: true,
       enableClickToCopy: true,
       muiCopyButtonProps: {
         fullWidth: true,

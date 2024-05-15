@@ -64,17 +64,18 @@ const {
   updateOneMobilePhone,
   deleteOneMobilePhone,
 } = require("./routes/mobilePhonesRoutes");
-const path = require('path');
+const { getAllWorkEquipament, getOneWorkEquipment, updateWorkEquipment, postWorkEquipment, deleteWorkEquipment } = require("./routes/ruteEchipamentLucru");
+// const path = require('path');
 
 // Middlewares
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, "..", "client", "build")));
+// app.use(express.static(path.join(__dirname, "..", "client", "build")));
 app.use("/login", logIn);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+// });
 
 
 // API SuppliChecklist
@@ -91,13 +92,13 @@ app.delete("/coral/it/necesar/:fisa", deleteNecesarFile);
 // API Equipment
 app.get("/coral/it/echipament", getAllEchipament);
 
-app.get("/coral/it/echipament/:cit", getOneEchipamentFile);
+app.get("/coral/it/echipament/:id", getOneEchipamentFile);
 
-app.put("/coral/it/echipament/:cit", updateEchipamentFile);
+app.put("/coral/it/echipament/:id", updateEchipamentFile);
 
 app.post("/coral/it/echipament/", postOneEchipoamentFile);
 
-app.delete("/coral/it/echipament/:cit", deleteOneEquipment);
+app.delete("/coral/it/echipament/:id", deleteOneEquipment);
 
 // API Handover
 app.get("/coral/it/predare", getAllpredare);
@@ -153,9 +154,9 @@ app.get("/coral/api/mobile-phones", getAllMobilePhones);
 
 app.post("/coral/api/mobile-phones", postOneMobilePhone);
 
-app.put("/coral/api/mobile-phones/:cit", updateOneMobilePhone);
+app.put("/coral/api/mobile-phones/:id", updateOneMobilePhone);
 
-app.delete("/coral/api/mobile-phones/:cit", deleteOneMobilePhone);
+app.delete("/coral/api/mobile-phones/:id", deleteOneMobilePhone);
 
 // API Employees
 app.get("/coral/api/users", getAllUsers);
@@ -166,7 +167,18 @@ app.put("/coral/api/users/:fisa", updateUser);
 
 app.post("/coral/api/users", createUser);
 
-app.post("/coral/api/users/:employeeID", deleteEmployee);
+app.delete("/coral/api/users/:employeeID", deleteEmployee);
+
+// API Work Equipment
+app.get("/coral/api/work-equipment", getAllWorkEquipament);
+
+app.get("/coral/api/work-equipment/:id", getOneWorkEquipment);
+
+app.put("/coral/api/work-equipment/:id", updateWorkEquipment);
+
+app.post("/coral/api/work-equipment", postWorkEquipment);
+
+app.delete("/coral/api/work-equipment/:id", deleteWorkEquipment);
 
 // Pornirea serverului
 const port = process.env.PORT;

@@ -1,5 +1,5 @@
 export const IT_EQUIPMENT_INITIAL_STATE = {
-    cit: "",
+    id: "",
     tip: "",
     model: "",
     serie: "",

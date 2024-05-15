@@ -30,7 +30,7 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
   const handleUpdateEquipment = ({ values, table }) => {
     dispatch(updateEchipament({ ...values, inventar: formatDate(new Date()) }));
 
-    setEqList((prev) => prev.filter((item) => item.cit !== values.cit));
+    setEqList((prev) => prev.filter((item) => item.id !== values.id));
 
     table.setEditingRow(null);
   };
@@ -48,7 +48,7 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
 
   useEffect(() => {
     const updatedList = dbEquipmentList.filter((item) => {
-      return file.echipament.some((cit) => cit === item.cit);
+      return file.echipament.some((id) => id === item.id);
     });
     if (file.echipament.length !== 0) {
       setEqList(updatedList);

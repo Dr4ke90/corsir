@@ -16,11 +16,11 @@ const echipSlice = createSlice({
       return [...state, ...action.payload];
     });
     builder.addCase(deleteEchipament.fulfilled, (state, action) => {
-      return state.filter((eq) => eq.cit !== action.payload);
+      return state.filter((eq) => eq.id !== action.payload);
     });
     builder.addCase(updateEchipament.fulfilled, (state, action) => {
       const indexToUpdate = state.findIndex(
-        (item) => item.cit === action.payload.cit
+        (item) => item.id === action.payload.id
       );
       if (indexToUpdate !== -1) {
         state[indexToUpdate] = action.payload;
@@ -61,7 +61,7 @@ export const updateEchipament = createAsyncThunk(
     delete echipament._id;
     try {
       const respons = await axios.put(
-        `http://localhost:3000/coral/it/echipament/${echipament.cit}`,
+        `http://localhost:3000/coral/it/echipament/${echipament.id}`,
         echipament
       );
       if (respons.status !== 200) {
@@ -76,7 +76,7 @@ export const updateEchipament = createAsyncThunk(
       console.log(
         respons.status,
         respons.data,
-        `Echipamentul ${echipament.cit} a fost actualizat cu succes!!`
+        `Echipamentul ${echipament.id} a fost actualizat cu succes!!`
       );
       return echipament;
     } catch (error) {
@@ -105,7 +105,7 @@ export const adaugaEchipament = createAsyncThunk(
       console.log(
         response.status,
         response.data,
-        `Echipamentul ${echipament.cit} a fost adaugat cu succes!!`
+        `Echipamentul ${echipament.id} a fost adaugat cu succes!!`
       );
       return echipament;
     } catch (error) {
@@ -137,7 +137,7 @@ export const addEquipmentGroup = createAsyncThunk(
           console.log(
             response.status,
             response.data,
-            `Echipamentul ${eq.cit} a fost adaugat cu succes!!`
+            `Echipamentul ${eq.id} a fost adaugat cu succes!!`
           );
         })
       );
@@ -156,7 +156,7 @@ export const updateEchipmentGroup = createAsyncThunk(
         eqList.map(async (eq) => {
           delete eq._id;
           const response = await axios.put(
-            `http://localhost:3000/coral/it/echipament/${eq.cit}`,
+            `http://localhost:3000/coral/it/echipament/${eq.id}`,
             eq
           );
 
@@ -175,28 +175,28 @@ export const updateEchipmentGroup = createAsyncThunk(
 
 export const deleteEchipament = createAsyncThunk(
   "echipament/deleteEchipament",
-  async (echipamentCit) => {
+  async (echipamentId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/coral/it/echipament/${echipamentCit}`
+        `http://localhost:3000/coral/it/echipament/${echipamentId}`
       );
       if (response.status !== 200) {
         console.log(
           response.status,
-          `Echipamentul ${echipamentCit} nu a putut fi sters!!`
+          `Echipamentul ${echipamentId} nu a putut fi sters!!`
         );
         return;
       }
 
       console.log(
         response.status,
-        `Echipamentul ${echipamentCit} a fost sters cu succes!!`
+        `Echipamentul ${echipamentId} a fost sters cu succes!!`
       );
-      return echipamentCit;
+      return echipamentId;
     } catch (error) {
       throw new Error(
         "Eroare la actualizarea echipamentului ",
-        echipamentCit,
+        echipamentId,
         error
       );
     }

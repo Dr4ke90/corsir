@@ -10,4 +10,5 @@ export const IT_EQUIPMENT_TYPES = [
     "SSD",
     "RAM",
     "Placa de baza",
+    "Router",
   ];

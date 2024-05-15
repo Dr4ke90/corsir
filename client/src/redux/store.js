@@ -18,6 +18,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import mobilePhonesSlice from "./slices/mobilePhonesSlice";
+import workEquipmentSlice from "./slices/workEquipmentSlice";
 
 const persistConfig = {
   key: "root",
@@ -37,6 +38,7 @@ const store = configureStore({
     locatii: locationsSlice,
     inventar: inventarSlice,
     telefoane: mobilePhonesSlice,
+    workEquipmentList: workEquipmentSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
