@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import {
+  deleteFisaPredare,
   fetchFisePredare,
   updateFisaPredare,
 } from "../../redux/slices/predareSlice";
@@ -48,6 +49,10 @@ const Handover = () => {
     table.setEditingRow(null);
   };
 
+  const handleDeleteFile = async (file) => {
+    dispatch(deleteFisaPredare(file));
+  };
+
   const dialogProps = {
     handleOpenCreateModal,
     data,
@@ -59,6 +64,7 @@ const Handover = () => {
     handleOpenCreateModal,
     handleOpenModalDetalii,
     handleUpdate: handleUpdateFile,
+    handleDelete: handleDeleteFile,
   };
 
   return (
