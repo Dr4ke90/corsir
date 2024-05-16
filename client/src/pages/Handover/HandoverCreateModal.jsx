@@ -29,11 +29,6 @@ import {
   fetchMobilePhones,
   updateMobilePhones,
 } from "../../redux/slices/mobilePhonesSlice";
-import {
-  fetchWorkEquipmentList,
-  updateWorkEquipment,
-} from "../../redux/slices/workEquipmentSlice";
-import { WORK_EQUIPMENT_TYPES } from "../WorkEquipment/Data/workEquipmentTypes";
 
 const HandoverCreateModal = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
@@ -44,7 +39,6 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
   const echipament = useSelector((state) => state.echipament);
   const angajati = useSelector((state) => state.users.allUsers);
   const locatii = useSelector((state) => state.locatii);
-  const workEquipment = useSelector((state) => state.workEquipmentList);
 
   const user = useSelector((state) => state.users.loggedUser);
 
@@ -60,7 +54,6 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
     dispatch(fetchLocations());
     dispatch(fetchAllUsers());
     dispatch(fetchMobilePhones());
-    dispatch(fetchWorkEquipmentList());
   }, [dispatch]);
 
   useEffect(() => {
@@ -74,14 +67,14 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
   useEffect(() => {
     setAddedEquipment(() => {
-      const combinedList = [...echipament, ...mobilePhones, ...workEquipment];
+      const combinedList = [...echipament, ...mobilePhones];
 
       const updatedList = combinedList.filter((eq) => {
         return fisa.echipament.some((id) => id === eq.id);
       });
       return [...updatedList];
     });
-  }, [fisa.echipament, echipament, mobilePhones, workEquipment]);
+  }, [fisa.echipament, echipament, mobilePhones]);
 
   useEffect(() => {
     if (fisa.primitor !== "") {
@@ -124,8 +117,6 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
           if (eq.tip === "Telefon") {
             dispatch(updateMobilePhones(eqUpdate));
-          } else if (WORK_EQUIPMENT_TYPES.includes(eq.tip)) {
-            dispatch(updateWorkEquipment(eqUpdate));
           } else {
             dispatch(updateEchipament(eqUpdate));
           }
@@ -322,10 +313,10 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
                 <Autocomplete
                   disablePortal
                   sx={{ marginTop: "5px" }}
-                  options={[...echipament, ...mobilePhones].map((eq) => eq.id)}
-                  renderInput={(params) => (
-                    <TextField {...params} label="ID" />
+                  options={[...echipament, ...mobilePhones].map(
+                    (item) => item.id
                   )}
+                  renderInput={(params) => <TextField {...params} label="ID" />}
                   onChange={handleSelectionChange}
                   size="small"
                 />
