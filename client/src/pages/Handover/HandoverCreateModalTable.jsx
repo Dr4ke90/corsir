@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -6,14 +6,27 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { PREDARE_DIALOG_TABLE_COLUMNS } from "./Data/handoverCreateModalTableColumns";
+import { useLocation } from "react-router-dom";
+import { HANDOVER_WEQ_CREATE_MODAL_TABLE_COLUMNS } from "./Data/handoverWeqCreateModalTableColumns";
 
 const HandoverCreateModalTable = ({ dialogTableProps }) => {
+  const location = useLocation();
   const { addedEquipment, handleRemoveEquipment } = dialogTableProps;
 
   const [rowSelection, setRowSelection] = useState("");
 
+  const [columns, setColumns] = useState([]);
+
+  useEffect(() => {
+    if (location.pathname.includes("tehnic")) {
+      setColumns(HANDOVER_WEQ_CREATE_MODAL_TABLE_COLUMNS());
+    } else {
+      setColumns(PREDARE_DIALOG_TABLE_COLUMNS());
+    }
+  }, [columns, location.pathname]);
+
   const table = useMaterialReactTable({
-    columns: PREDARE_DIALOG_TABLE_COLUMNS(),
+    columns,
     data: addedEquipment,
     enableColumnActions: false,
     enableColumnFilters: false,

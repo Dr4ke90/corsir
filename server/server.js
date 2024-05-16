@@ -34,6 +34,7 @@ const {
   getNecesarTemplate,
   getPvrTemplate,
   getPvppTemplate,
+  getPvppWorkEqTemplate,
 } = require("./routes/ruteFisiere");
 const {
   getAllUsers,
@@ -64,7 +65,13 @@ const {
   updateOneMobilePhone,
   deleteOneMobilePhone,
 } = require("./routes/mobilePhonesRoutes");
-const { getAllWorkEquipament, getOneWorkEquipment, updateWorkEquipment, postWorkEquipment, deleteWorkEquipment } = require("./routes/ruteEchipamentLucru");
+const {
+  getAllWorkEquipament,
+  getOneWorkEquipment,
+  updateWorkEquipment,
+  postWorkEquipment,
+  deleteWorkEquipment,
+} = require("./routes/ruteEchipamentLucru");
 // const path = require('path');
 
 // Middlewares
@@ -76,7 +83,6 @@ app.use("/login", logIn);
 // app.get('*', (req, res) => {
 //   res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
 // });
-
 
 // API SuppliChecklist
 app.get("/coral/it/necesar", getAllNecesar);
@@ -137,6 +143,8 @@ app.delete("/coral/it/inventar/:fisa", deleteOneInventoryFile);
 app.get("/coral/it/templates/necesar.docx", getNecesarTemplate);
 
 app.get("/coral/it/templates/predare.docx", getPvppTemplate);
+
+app.get("/coral/it/templates/predare-echip-lucru.docx", getPvppWorkEqTemplate);
 
 app.get("/coral/it/templates/retur.docx", getPvrTemplate);
 

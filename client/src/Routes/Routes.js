@@ -18,6 +18,7 @@ const AppRoutes = () => {
       <Route exact path={`/`} element={<Dashboard />} />
       <Route path="/echipament-it" element={<ItEquipment />} />
       <Route path="/predare" element={<Handover />} />
+      <Route path="/predare-tehnic" element={<Handover />} />
       <Route path="/retur" element={<Return />} />
       <Route path="/necesar" element={<SupplyChecklist />} />
       <Route path="/inventar-it" element={<Inventory />} />

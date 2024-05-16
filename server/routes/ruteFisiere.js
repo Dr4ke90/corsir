@@ -54,6 +54,32 @@ const getNecesarTemplate = (req, res) => {
     });
   }
 
+
+  const getPvppWorkEqTemplate = (req, res) => {
+    const filePath = path.join(__dirname, "../resources/tampletes/predare-echip-lucru.docx");
+  
+    const fileStream = fs.createReadStream(filePath);
+  
+    fileStream.on("open", () => {
+      res.setHeader("Content-Disposition", 'attachment; filename="predare-echip-lucru.docx"');
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      );
+  
+      fileStream.pipe(res);
+    });
+  
+    fileStream.on("error", (err) => {
+      console.error("Error reading file:", err);
+      res.status(500).send("Error reading file");
+    });
+  
+    fileStream.on("close", () => {
+      console.log("File read successfully");
+    });
+  }
+
   const getPvrTemplate = (req, res) => {
     const filePath = path.join(__dirname, "../resources/tampletes/retur.docx");
     const fileStream = fs.createReadStream(filePath);
@@ -79,5 +105,6 @@ const getNecesarTemplate = (req, res) => {
   module.exports = {
     getNecesarTemplate,
     getPvppTemplate,
-    getPvrTemplate
+    getPvrTemplate,
+    getPvppWorkEqTemplate
   }

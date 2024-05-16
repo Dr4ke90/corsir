@@ -6,21 +6,20 @@ import {
   updateFisaPredare,
 } from "../../redux/slices/predareSlice";
 import MuiTable from "../../components/MaterialUiTable/MuiTable";
-import ModalPredare from "./HandoverCreateModal";
-import ModalDetaliiPredare from "./HandoverDetailsModal";
+import HandoverCreateModal from "./HandoverCreateModal";
+import HandoverDetailsModal from "./HandoverDetailsModal";
 import { PREDARE_MUI_TABLE_COLUMNS } from "./Data/handoverMaterialTableColumns";
 import { HANDOVER_FILE_INITIAL_STATE } from "./Data/handoverFileInitialState";
-import { fetchMobilePhones } from "../../redux/slices/mobilePhonesSlice";
+import { useLocation } from "react-router-dom";
+import HandoverCreateModalWEq from "./HandoverCreateModalWEq";
 
 const Handover = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const listaPredare = useSelector((state) => state.predare);
 
-  const data = useMemo(
-    () => (Array.isArray(listaPredare) ? listaPredare.slice().reverse() : []),
-    [listaPredare]
-  );
+  const data = useMemo(() => listaPredare.slice().reverse(), [listaPredare]);
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
@@ -41,7 +40,6 @@ const Handover = () => {
 
   useEffect(() => {
     dispatch(fetchFisePredare());
-    dispatch(fetchMobilePhones());
   }, [dispatch]);
 
   const handleUpdateFile = async ({ values, table }) => {
@@ -71,9 +69,19 @@ const Handover = () => {
     <div className="predare-eq">
       <MuiTable props={tableProps} />
 
-      <ModalPredare open={isOpenCreateModal} dialogProps={dialogProps} />
+      {location.pathname.includes("tehnic") ? (
+        <HandoverCreateModalWEq
+          open={isOpenCreateModal}
+          dialogProps={dialogProps}
+        />
+      ) : (
+        <HandoverCreateModal
+          open={isOpenCreateModal}
+          dialogProps={dialogProps}
+        />
+      )}
 
-      <ModalDetaliiPredare
+      <HandoverDetailsModal
         open={isOpenModalDetalii}
         file={selectedFile}
         handleClose={handleOpenModalDetalii}

@@ -7,53 +7,49 @@ import {
   Dialog,
   DialogActions,
 } from "@mui/material";
+import HandoverCreateModalTable from "./HandoverCreateModalTable";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { createFileNumber } from "../../utils/createFileNumber";
-import {
-  fetchEchipament,
-  updateEchipament,
-} from "../../redux/slices/echipSlice";
-import {
-  fetchLocations,
-  updateLocation,
-} from "../../redux/slices/locationsSlice";
+import { fetchLocations } from "../../redux/slices/locationsSlice";
 import { handleFetchFile } from "../../utils/fetchDoecument";
 import { addFisaPredare } from "../../redux/slices/predareSlice";
 import { formatDate } from "../../utils/formatDate";
-import { fetchAllUsers, updateUser } from "../../redux/slices/usersSlice";
-import { IT_EQUIPMENT_INITIAL_STATE } from "../ItEquipment/Data/itEquipmentInitialState";
+import { fetchAllUsers } from "../../redux/slices/usersSlice";
 import { HANDOVER_FILE_INITIAL_STATE } from "./Data/handoverFileInitialState";
-import {
-  fetchMobilePhones,
-  updateMobilePhones,
-} from "../../redux/slices/mobilePhonesSlice";
-import HandoverCreateModalTable from "./HandoverCreateModalTable";
+import { fetchWorkEquipmentList } from "../../redux/slices/workEquipmentSlice";
+import { WORK_EQUIPMENT_INITIAL_STATE } from "../WorkEquipment/Data/workEquipmentInitialState";
+import { handoverValidateInputs } from "./Func/handoverValidateInputs";
+import { useHandoverUpdateEmployee } from "./Func/useHandoverUpdateEmployee";
+import { useHandoverUpdateEquipment } from "./Func/useHandoverUpdateEquipment";
 
-const HandoverCreateModal = ({ open, dialogProps }) => {
+const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
 
   const dispatch = useDispatch();
+  const handoverUpdateEmployee = useHandoverUpdateEmployee();
+  const handoverUpdateEquipment = useHandoverUpdateEquipment();
 
-  const mobilePhones = useSelector((state) => state.telefoane);
-  const echipament = useSelector((state) => state.echipament);
   const angajati = useSelector((state) => state.users.allUsers);
   const locatii = useSelector((state) => state.locatii);
+  const workEquipment = useSelector((state) => state.workEquipmentList);
 
   const user = useSelector((state) => state.users.loggedUser);
 
   const [fisa, setFisa] = useState(HANDOVER_FILE_INITIAL_STATE);
-  const [selectedCit, setSelectedCit] = useState(IT_EQUIPMENT_INITIAL_STATE);
+  const [selectedCit, setSelectedCit] = useState(WORK_EQUIPMENT_INITIAL_STATE);
+
+  const [validationErrors, setValidationErrors] = useState({});
 
   const [addedEquipment, setAddedEquipment] = useState([]);
 
-  const fileUrl = "http://localhost:3000/coral/it/templates/predare.docx";
+  const fileUrl =
+    "http://localhost:3000/coral/it/templates/predare-echip-lucru.docx";
 
   useEffect(() => {
-    dispatch(fetchEchipament());
     dispatch(fetchLocations());
     dispatch(fetchAllUsers());
-    dispatch(fetchMobilePhones());
+    dispatch(fetchWorkEquipmentList());
   }, [dispatch]);
 
   useEffect(() => {
@@ -67,14 +63,23 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
   useEffect(() => {
     setAddedEquipment(() => {
-      const combinedList = [...echipament, ...mobilePhones];
-
-      const updatedList = combinedList.filter((eq) => {
-        return fisa.echipament.some((id) => id === eq.id);
-      });
-      return [...updatedList];
+      const updatedList = workEquipment
+        .map((eq) => {
+          const matchingItem = fisa.echipament.find(
+            (item) => item.id === eq.id
+          );
+          if (matchingItem) {
+            return {
+              ...eq,
+              cantitate: matchingItem.cantitate,
+            };
+          }
+          return eq;
+        })
+        .filter((eq) => fisa.echipament.some((item) => item.id === eq.id));
+      return updatedList;
     });
-  }, [fisa.echipament, echipament, mobilePhones]);
+  }, [fisa.echipament, workEquipment]);
 
   useEffect(() => {
     if (fisa.primitor !== "") {
@@ -92,59 +97,12 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
   const handleCreateFile = async () => {
     if (fisa.echipament.length === 0) return;
 
-    let response = await dispatch(
-      addFisaPredare({
-        ...fisa,
-        primitor: fisa.primitor === "" ? fisa.locatie : fisa.primitor,
-      })
-    );
+    let response = await dispatch(addFisaPredare(fisa));
 
     if (response.meta.requestStatus === "fulfilled") {
-      fisa.echipament.forEach((id) => {
-        const combinedEquipment = [...echipament, ...mobilePhones];
+      handoverUpdateEquipment(workEquipment, fisa);
 
-        const filteredEquipments = combinedEquipment.filter(
-          (item) => item.id === id
-        );
-
-        filteredEquipments.forEach((eq) => {
-          const eqUpdate = {
-            ...eq,
-            persoana: fisa.primitor === "" ? fisa.locatie : fisa.primitor,
-            locatie: fisa.locatie,
-            pv: [...eq.pv, fisa.fisa],
-          };
-
-          if (eq.tip === "Telefon") {
-            dispatch(updateMobilePhones(eqUpdate));
-          } else {
-            dispatch(updateEchipament(eqUpdate));
-          }
-        });
-      });
-
-      const primitor = angajati.find(
-        (angajat) => angajat.nume === fisa.primitor
-      );
-
-      if (primitor) {
-        dispatch(
-          updateUser({
-            ...primitor,
-            echipamente: [...primitor.echipamente, ...fisa.echipament],
-          })
-        );
-      } else {
-        const locatie = locatii.find(
-          (locatie) => locatie.proiect === fisa.locatie
-        );
-        dispatch(
-          updateLocation({
-            ...locatie,
-            echipamente: [...locatie.echipamente, ...fisa.echipament],
-          })
-        );
-      }
+      handoverUpdateEmployee(angajati, fisa);
 
       handleFetchFile(fileUrl, { ...fisa, echipament: [...addedEquipment] });
     } else {
@@ -157,18 +115,38 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
   const handleSelectionChange = (event, newValue) => {
     if (newValue === null) return;
-    setSelectedCit(
-      [...echipament, ...mobilePhones].find((item) => item.id === newValue)
-    );
+
+    const selectedItem = workEquipment.find((item) => item.id === newValue);
+    if (selectedItem) {
+      setSelectedCit(selectedItem);
+    } else {
+      return;
+    }
   };
 
   const handleAdaugaEchipament = () => {
+    const newValidationErrors = handoverValidateInputs(selectedCit);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     setFisa((prev) => {
       const findItem = prev.echipament.find((id) => id === selectedCit.id);
       if (findItem) return prev;
 
-      return { ...prev, echipament: [...prev.echipament, selectedCit.id] };
+      return {
+        ...prev,
+        echipament: [
+          ...prev.echipament,
+          { id: selectedCit.id, cantitate: selectedCit.cantitate },
+        ],
+      };
     });
+
+    setSelectedCit(WORK_EQUIPMENT_INITIAL_STATE);
   };
 
   const handleRemoveEquipment = (itemID) => {
@@ -180,13 +158,24 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
     });
   };
 
+  const handleQuantityChange = (e) => {
+    const { value } = e.target;
+
+    setSelectedCit((prev) => {
+      return {
+        ...prev,
+        cantitate: value,
+      };
+    });
+  };
+
   const dialogTableProps = {
     addedEquipment,
     handleRemoveEquipment,
   };
 
   return (
-    <Dialog open={open} maxWidth="lg" fullWidth={true}>
+    <Dialog open={open} maxWidth="md" fullWidth={true}>
       <DialogContent
         sx={{
           display: "flex",
@@ -202,7 +191,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
             justifyContent: "space-between",
           }}
         >
-          <Box width={"20%"}>
+          <Box width={"35%"}>
             <TextField
               variant="outlined"
               readOnly
@@ -223,7 +212,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
           <Box
             sx={{
-              width: "40%",
+              width: "55%",
               display: "flex",
               justifyContent: "flex-end",
               gap: "10px",
@@ -268,7 +257,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
         <hr />
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box
-            width="25%"
+            width="50%"
             marginRight="20px"
             sx={{ display: "flex", flexDirection: "column", gap: "10px" }}
           >
@@ -313,9 +302,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
                 <Autocomplete
                   disablePortal
                   sx={{ marginTop: "5px" }}
-                  options={[...echipament, ...mobilePhones].map(
-                    (item) => item.id
-                  )}
+                  options={workEquipment.map((item) => item.id)}
                   renderInput={(params) => <TextField {...params} label="ID" />}
                   onChange={handleSelectionChange}
                   size="small"
@@ -329,17 +316,21 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
                 />
                 <TextField
                   variant="standard"
-                  label="Model"
+                  label="Marime"
                   sx={{ width: "100%" }}
-                  value={selectedCit.model}
+                  value={selectedCit.marime}
                   disabled
                 />
                 <TextField
                   variant="standard"
-                  label="Serie"
+                  label="Cantitate"
+                  name="cantitate"
                   sx={{ width: "100%" }}
-                  value={selectedCit.serie}
-                  disabled
+                  value={selectedCit.cantitate}
+                  onChange={handleQuantityChange}
+                  required={true}
+                  error={!!validationErrors.cantitate}
+                  helperText={validationErrors.cantitate}
                 />
               </Box>
 
@@ -377,4 +368,4 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
   );
 };
 
-export default HandoverCreateModal;
+export default HandoverCreateModalWEq;
