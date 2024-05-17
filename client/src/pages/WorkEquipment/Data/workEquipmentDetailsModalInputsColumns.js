@@ -1,6 +1,6 @@
 export const WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS = () => [
   {
-    accessorKey: "data",
+    accessorKey: "achizitie",
     header: "Data",
     size: 90,
     grow: true,
@@ -14,7 +14,21 @@ export const WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS = () => [
     enableEditing: false,
   },
   {
-    accessorKey: "factura",
+    accessorKey: "cantitate",
+    header: "Cantitate",
+    size: 120,
+    grow: true,
+    enableEditing: false,
+  },
+  {
+    accessorKey: "pret",
+    header: "Pret",
+    size: 120,
+    grow: true,
+    enableEditing: false,
+  },
+  {
+    accessorKey: "refFactura",
     header: "Serie factura",
     size: 120,
     grow: true,

@@ -21,8 +21,15 @@ export const WORK_EQUIPMENT_ADD_MODAL_TABLE_COLUMNS = () => [
     grow: true,
   },
   {
-    accessorKey: "cantitate",
+    accessorKey: "stocNou",
     header: "Cantitate",
+    size: 100,
+    grow: true,
+    enableEditing: false,
+  },
+  {
+    accessorKey: "pret",
+    header: "Pret",
     size: 100,
     grow: true,
     enableEditing: false,

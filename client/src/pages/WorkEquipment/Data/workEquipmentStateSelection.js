@@ -1,5 +1,6 @@
 export const WORK_EQUIPMENT_STATE_SELECTION = [
-  "Buna",
+  "Nou",
+  "Uzat",
   "De spalat",
   "De Casat",
   "Casat",

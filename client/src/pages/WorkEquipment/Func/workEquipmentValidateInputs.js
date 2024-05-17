@@ -3,7 +3,8 @@ export function workEquipmentValidateInputs(obj) {
   return {
     marime: !validateRequired(obj.marime) ? "Marimea este obligatorie" : "",
     tip: !validateRequired(obj.tip) ? "Tipul este obligatoriu" : "",
-    cantitate: !validateRequired(obj.cantitate)
+    pret: !validateRequired(obj.pret) ? "Pretul este obligatoriu" : "",
+    stocNou: !validateRequired(obj.stocNou)
       ? "Cantitatea este obligatorie"
       : "",
   };

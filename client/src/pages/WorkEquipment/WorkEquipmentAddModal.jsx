@@ -8,7 +8,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { INVOICE_INITIAL_STATE } from "../../data/invoiceInitialState";
 import { WORK_EQUIPMENT_INITIAL_STATE } from "./Data/workEquipmentInitialState";
 import { WORK_EQUIPMENT_INPUT_LIST } from "./Data/workEquipmentInputList";
@@ -26,12 +26,17 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
   const { handleOpenCreateModal, data } = dialogProps;
 
   const dispatch = useDispatch();
+  const loggedUser = useSelector((state) => state.users.loggedUser);
 
   const [workEquipmentList, setWorkEquipmentList] = useState([]);
 
   const [workEquipmentState, setWorkEquipmentState] = useState(
     WORK_EQUIPMENT_INITIAL_STATE
   );
+
+  useEffect(() => {
+    console.log(workEquipmentState);
+  }, [workEquipmentState]);
 
   const [tip, setTip] = useState("");
 
@@ -122,12 +127,20 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
       const matchingData = data.find((item) => item.id === equipment.id);
       if (matchingData) {
         const updatedQuantity =
-          parseInt(matchingData.cantitate) + parseInt(equipment.cantitate);
+          parseInt(matchingData.stocNou) + parseInt(equipment.stocNou);
         dispatch(
           updateWorkEquipment({
             ...matchingData,
-            cantitate: updatedQuantity.toString(),
-            intrari: [...matchingData.intrari, infoInvoiceState],
+            stocNou: updatedQuantity,
+            intrari: [
+              ...matchingData.intrari,
+              {
+                ...infoInvoiceState,
+                receptie: loggedUser.nume,
+                cantitate: equipment.stocNou,
+                pret: equipment.pret,
+              },
+            ],
           })
         );
       } else {
@@ -170,7 +183,7 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
             gap: "5px",
           }}
         >
-          {WORK_EQUIPMENT_INPUT_LIST.slice(3).map((name) => (
+          {WORK_EQUIPMENT_INPUT_LIST.slice(4).map((name) => (
             <TextField
               key={name}
               name={name}
@@ -226,14 +239,18 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
               ))}
             </TextField>
           ))}
-          {WORK_EQUIPMENT_INPUT_LIST.slice(1, 3).map((name) => (
+          {WORK_EQUIPMENT_INPUT_LIST.slice(1, 4).map((name) => (
             <TextField
               key={name}
-              name={name}
+              name={name === "cantitate" ? "stocNou" : name}
               variant="standard"
               label={name.slice(0, 1).toUpperCase() + name.slice(1)}
               onChange={handleChangeWorkEquipment}
-              value={workEquipmentState[name]}
+              value={
+                name === "cantitate"
+                  ? workEquipmentState["stocNou"]
+                  : workEquipmentState[name]
+              }
               size="small"
               required={true}
               error={!!validationErrors[name]}

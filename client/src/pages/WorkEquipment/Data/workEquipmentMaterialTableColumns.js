@@ -46,8 +46,21 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
       },
     },
     {
-      accessorKey: "cantitate",
-      header: "Cantitate",
+      accessorKey: "stocNou",
+      header: "Stoc (NOU)",
+      size: 100,
+      grow: true,
+      enableEditing: true,
+      enableClickToCopy: true,
+      muiCopyButtonProps: {
+        fullWidth: true,
+        // startIcon: <ContentCopy />,
+        sx: { justifyContent: "flex-start" },
+      },
+    },
+    {
+      accessorKey: "stocUzat",
+      header: "Stoc (UZAT)",
       size: 100,
       grow: true,
       enableEditing: true,
@@ -70,19 +83,6 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
       muiEditTextFieldProps: {
         select: true,
       },
-      enableClickToCopy: true,
-      muiCopyButtonProps: {
-        fullWidth: true,
-        // startIcon: <ContentCopy />,
-        sx: { justifyContent: "flex-start" },
-      },
-    },
-    {
-      accessorKey: "achizitie",
-      header: "Achizitie",
-      size: 100,
-      grow: true,
-      enableEditing: true,
       enableClickToCopy: true,
       muiCopyButtonProps: {
         fullWidth: true,
