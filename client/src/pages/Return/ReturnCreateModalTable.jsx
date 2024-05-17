@@ -1,21 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton, Tooltip } from "@mui/material";
-import { RETUR_COLOANE_MODAL_CREARE } from "./Data/returnCreateModalTableColumns";
+import { RETURN_CREATE_MODAL_TABELE_COLUMNS } from "./Data/returnCreateModalTableColumns";
+import { RETURN_WEQ_CREATE_MODAL_TABLE_COLUMNS } from "./Data/returnWeqCreateModalTableColumns";
+import { useLocation } from "react-router-dom";
 
 const ReturDialogTable = ({ data }) => {
   const { addedEquipment, handleRemoveEquipment } = data;
 
   const [rowSelection, setRowSelection] = useState("");
 
+  const location = useLocation();
 
+  const [columns, setColumns] = useState([]);
+
+  useEffect(() => {
+    if (location.pathname.includes("tehnic")) {
+      setColumns(RETURN_WEQ_CREATE_MODAL_TABLE_COLUMNS());
+    } else {
+      setColumns(RETURN_CREATE_MODAL_TABELE_COLUMNS());
+    }
+  }, [columns, location.pathname]);
 
   const table = useMaterialReactTable({
-    columns: RETUR_COLOANE_MODAL_CREARE(),
+    columns,
     data: addedEquipment,
     enableColumnActions: false,
     enableColumnFilters: false,

@@ -17,9 +17,10 @@ const AppRoutes = () => {
     <Routes>
       <Route exact path={`/`} element={<Dashboard />} />
       <Route path="/echipament-it" element={<ItEquipment />} />
-      <Route path="/predare" element={<Handover />} />
+      <Route path="/predare-it" element={<Handover />} />
       <Route path="/predare-tehnic" element={<Handover />} />
-      <Route path="/retur" element={<Return />} />
+      <Route path="/retur-it" element={<Return />} />
+      <Route path="/retur-tehnic" element={<Return />} />
       <Route path="/necesar" element={<SupplyChecklist />} />
       <Route path="/inventar-it" element={<Inventory />} />
       <Route path="/angajati" element={<Employees />} />

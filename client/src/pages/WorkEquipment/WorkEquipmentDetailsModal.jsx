@@ -15,6 +15,7 @@ import { fetchFiseRetur } from "../../redux/slices/returSlice";
 import { INV_TABLE_COLUMNS } from "../ItInventory/inventarDatas";
 import Notice from "../../components/Notice/Noice";
 import { WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS } from "./Data/workEquipmentDetailsModalPvColumns";
+import { WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS } from "./Data/workEquipmentDetailsModalInputsColumns";
 
 const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
       const combinedPV = [...handover, ...retur];
 
       const updatedList = combinedPV.filter((p) => {
-        return file.pv.some((cit) => cit === p.fisa);
+        return file.pv.some((id) => id === p.fisa);
       });
       return [...updatedList];
     });
@@ -91,7 +92,15 @@ const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
         </Box>
         <hr />
         <Box className="mp-pvInfo">
-          <DialogTitle> Informatii procese verbale </DialogTitle>
+          <DialogTitle> Intrari </DialogTitle>
+          <DetailsTable
+            data={file.intrari}
+            columns={WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS}
+          />
+        </Box>
+        <hr />
+        <Box className="mp-pvInfo">
+          <DialogTitle> Iesiri </DialogTitle>
           <DetailsTable
             data={pv}
             columns={WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS}
@@ -99,8 +108,8 @@ const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
         </Box>
         <hr />
         <Box className="mp-inventory">
-          <DialogTitle> Lista inventare </DialogTitle>
-          <DetailsTable data={[]} columns={INV_TABLE_COLUMNS} />
+          <DialogTitle> Inventare </DialogTitle>
+          <DetailsTable data={file.inventar} columns={INV_TABLE_COLUMNS} />
         </Box>
         <hr />
         <Box className="mp-notice">

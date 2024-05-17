@@ -7,46 +7,50 @@ import {
   Dialog,
   DialogActions,
 } from "@mui/material";
-import HandoverCreateModalTable from "./HandoverCreateModalTable";
+import ReturDialogTable from "./ReturnCreateModalTable";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { createFileNumber } from "../../utils/createFileNumber";
-import { fetchLocations } from "../../redux/slices/locationsSlice";
+import { fetchFisePredare } from "../../redux/slices/predareSlice";
+
 import { handleFetchFile } from "../../utils/fetchDoecument";
-import { addFisaPredare } from "../../redux/slices/predareSlice";
+import { fetchLocations } from "../../redux/slices/locationsSlice";
+import { addFisaRetur } from "../../redux/slices/returSlice";
 import { formatDate } from "../../utils/formatDate";
+import { RETURN_FILE_INITIAL_STATE } from "./Data/returnFileInitialState";
 import { fetchAllUsers } from "../../redux/slices/usersSlice";
-import { HANDOVER_FILE_INITIAL_STATE } from "./Data/handoverFileInitialState";
-import { fetchWorkEquipmentList } from "../../redux/slices/workEquipmentSlice";
+
 import { WORK_EQUIPMENT_INITIAL_STATE } from "../WorkEquipment/Data/workEquipmentInitialState";
-import { handoverValidateInputs } from "./Func/handoverValidateInputs";
-import { useHandoverUpdateEmployee } from "./Func/useHandoverUpdateEmployee";
-import { useHandoverUpdateEquipment } from "./Func/useHandoverUpdateEquipment";
+import {
+  fetchWorkEquipmentList,
+  updateWorkEquipment,
+} from "../../redux/slices/workEquipmentSlice";
+import { useReturnUpdateEmployee } from "./Func/useReturnUpdateEmployee";
 
-const HandoverCreateModalWEq = ({ open, dialogProps }) => {
+const ReturnCreateModalWEq = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
-
   const dispatch = useDispatch();
-  const handoverUpdateEmployee = useHandoverUpdateEmployee();
-  const handoverUpdateEquipment = useHandoverUpdateEquipment();
+  const returnUpdateEmployee = useReturnUpdateEmployee();
 
-  const angajati = useSelector((state) => state.users.allUsers);
-  const locatii = useSelector((state) => state.locatii);
+  const predare = useSelector((state) => state.predare);
+  const locations = useSelector((state) => state.locatii);
+  const employees = useSelector((state) => state.users.allUsers);
   const workEquipment = useSelector((state) => state.workEquipmentList);
 
-  const user = useSelector((state) => state.users.loggedUser);
-
-  const [fisa, setFisa] = useState(HANDOVER_FILE_INITIAL_STATE);
-  const [selectedCit, setSelectedCit] = useState(WORK_EQUIPMENT_INITIAL_STATE);
-
-  const [validationErrors, setValidationErrors] = useState({});
+  const [fisa, setFisa] = useState(RETURN_FILE_INITIAL_STATE);
+  const [selectedEquipment, setSelectedEquipment] = useState(
+    WORK_EQUIPMENT_INITIAL_STATE
+  );
 
   const [addedEquipment, setAddedEquipment] = useState([]);
 
   const fileUrl =
-    "http://localhost:3000/coral/it/templates/predare-echip-lucru.docx";
+    "http://localhost:3000/coral/it/templates/retur-echip-lucru.docx";
+
+  const [selectedPv, setSelectedPv] = useState("");
 
   useEffect(() => {
+    dispatch(fetchFisePredare());
     dispatch(fetchLocations());
     dispatch(fetchAllUsers());
     dispatch(fetchWorkEquipmentList());
@@ -55,11 +59,10 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   useEffect(() => {
     setFisa((prevFisa) => ({
       ...prevFisa,
-      fisa: createFileNumber(data, "P"),
+      fisa: createFileNumber(data, "R"),
       data: formatDate(new Date()),
-      predator: user.nume,
     }));
-  }, [data, user.nume]);
+  }, [data]);
 
   useEffect(() => {
     setAddedEquipment(() => {
@@ -82,60 +85,41 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   }, [fisa.echipament, workEquipment]);
 
   useEffect(() => {
-    if (fisa.primitor !== "") {
-      setFisa((prev) => {
-        return {
-          ...prev,
-          locatie: angajati.find((a) => a.nume === prev.primitor).locatie,
-        };
-      });
-    } else {
-      return;
-    }
-  }, [fisa.primitor, angajati]);
+    if (selectedPv === null) return;
 
-  const handleCreateFile = async () => {
-    if (fisa.echipament.length === 0) return;
+    const [pv] = selectedPv.split(" ");
 
-    let response = await dispatch(addFisaPredare(fisa));
+    const selectedFile = predare.find((fisa) => fisa.fisa === pv);
+    if (!selectedFile) return;
 
-    if (response.meta.requestStatus === "fulfilled") {
-      handoverUpdateEquipment(workEquipment, fisa);
+    const updatedFile = { ...selectedFile };
+    delete updatedFile.fisa;
+    delete updatedFile.data;
+    delete updatedFile._id;
+    setFisa((prev) => {
+      return {
+        ...prev,
+        ...updatedFile,
+        predator: selectedFile.primitor,
+        primitor: updatedFile.predator,
+        pvPredare: selectedFile.fisa,
+      };
+    });
+  }, [selectedPv, predare]);
 
-      handoverUpdateEmployee(angajati, fisa);
-
-      handleFetchFile(fileUrl, { ...fisa, echipament: [...addedEquipment] });
-    } else {
-      throw new Error("Adaugarea fisei nu a avut succes");
-    }
-
-    setFisa(HANDOVER_FILE_INITIAL_STATE);
-    handleOpenCreateModal();
+  const handleChangePvPredare = (event, newValue) => {
+    setSelectedPv(newValue);
   };
 
-  const handleSelectionChange = (event, newValue) => {
+  const handleIdChange = (event, newValue) => {
     if (newValue === null) return;
-
-    const selectedItem = workEquipment.find((item) => item.id === newValue);
-    if (selectedItem) {
-      setSelectedCit(selectedItem);
-    } else {
-      return;
-    }
+    setSelectedEquipment(workEquipment.find((item) => item.id === newValue));
   };
 
   const handleAdaugaEchipament = () => {
-    const newValidationErrors = handoverValidateInputs(selectedCit);
-    if (Object.values(newValidationErrors).some((error) => error)) {
-      setValidationErrors(newValidationErrors);
-      console.log("Toate campurile sunt obligatorii");
-      return;
-    }
-    setValidationErrors({});
-
     setFisa((prev) => {
       const findItem = prev.echipament.find(
-        (item) => item.id === selectedCit.id
+        (item) => item.id === selectedEquipment.id
       );
       if (findItem) return prev;
 
@@ -143,15 +127,16 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
         ...prev,
         echipament: [
           ...prev.echipament,
-          { id: selectedCit.id, cantitate: selectedCit.cantitate },
+          { id: selectedEquipment.id, cantitate: selectedEquipment.cantitate },
         ],
       };
     });
 
-    setSelectedCit(WORK_EQUIPMENT_INITIAL_STATE);
+    setSelectedEquipment(WORK_EQUIPMENT_INITIAL_STATE);
   };
 
   const handleRemoveEquipment = (itemID) => {
+    console.log(itemID);
     setFisa((prev) => {
       return {
         ...prev,
@@ -160,15 +145,36 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
     });
   };
 
-  const handleQuantityChange = (e) => {
-    const { value } = e.target;
+  const handleCreateFile = async () => {
+    if (fisa.echipament.length === 0) return;
 
-    setSelectedCit((prev) => {
-      return {
-        ...prev,
-        cantitate: value,
-      };
-    });
+    const response = await dispatch(addFisaRetur(fisa));
+
+    if (response.meta.requestStatus === "fulfilled") {
+      fisa.echipament.forEach((addedEq) => {
+        const filteredEquipments = workEquipment.filter(
+          (item) => item.id === addedEq.id
+        );
+
+        filteredEquipments.forEach((item) => {
+          const eqUpdate = {
+            ...item,
+            pv: [...item.pv, fisa.fisa],
+            cantitate: parseInt(item.cantitate) + parseInt(addedEq.cantitate),
+          };
+
+          dispatch(updateWorkEquipment(eqUpdate));
+        });
+      });
+
+      returnUpdateEmployee(employees, fisa);
+
+      handleFetchFile(fileUrl, { ...fisa, echipament: [...fisa.echipament] });
+    } else {
+      throw new Error("Adaugarea fisei nu a avut succes");
+    }
+
+    handleOpenCreateModal();
   };
 
   const dialogTableProps = {
@@ -177,7 +183,7 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   };
 
   return (
-    <Dialog open={open} maxWidth="md" fullWidth={true}>
+    <Dialog open={open} maxWidth="lg" fullWidth={true}>
       <DialogContent
         sx={{
           display: "flex",
@@ -186,37 +192,30 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
         }}
       >
         <Box
-          width="100%"
           sx={{
+            width: "100%",
             display: "flex",
-            flexDirection: "row",
             justifyContent: "space-between",
+            gap: "10px",
           }}
         >
-          <Box width={"35%"}>
-            <TextField
-              variant="outlined"
-              readOnly
-              value={fisa.predator}
-              label="Predator"
-              size="small"
-              sx={{
-                textAlign: "center",
-                "& input": {
-                  color: "black",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  backgroundColor: "aliceblue",
-                },
-              }}
-            />
-          </Box>
-
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            sx={{ marginTop: "5px", width: "300px" }}
+            options={predare.map((file) => `${file.fisa} - ${file.primitor}`)}
+            renderInput={(params) => (
+              <TextField {...params} label="PV Predare" />
+            )}
+            onChange={handleChangePvPredare}
+            size="small"
+            value={selectedPv}
+          />
           <Box
             sx={{
-              width: "55%",
+              width: "30%",
               display: "flex",
-              justifyContent: "flex-end",
+              flexDirection: "row",
               gap: "10px",
             }}
           >
@@ -259,17 +258,33 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
         <hr />
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Box
-            width="50%"
+            width="25%"
             marginRight="20px"
             sx={{ display: "flex", flexDirection: "column", gap: "10px" }}
           >
             <Autocomplete
-              options={angajati
-                .filter((item) => !item.nume.includes(fisa.predator))
-                .map((user) => user.nume)}
+              options={employees.map((employee) => employee.nume)}
+              renderInput={(params) => (
+                <TextField {...params} label="Predator" variant="standard" />
+              )}
+              value={fisa.predator}
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setFisa((prev) => {
+                    return {
+                      ...prev,
+                      predator: newValue,
+                    };
+                  });
+                }
+              }}
+            />
+            <Autocomplete
+              options={employees.map((employee) => employee.nume)}
               renderInput={(params) => (
                 <TextField {...params} label="Primitor" variant="standard" />
               )}
+              value={fisa.primitor}
               onChange={(event, newValue) => {
                 if (newValue) {
                   setFisa((prev) => {
@@ -281,8 +296,9 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
                 }
               }}
             />
+
             <Autocomplete
-              options={locatii.map((loc) => loc.proiect)}
+              options={locations.map((loc) => loc.proiect)}
               renderInput={(params) => (
                 <TextField {...params} label="Locatie" variant="standard" />
               )}
@@ -303,36 +319,26 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
               <Box>
                 <Autocomplete
                   disablePortal
+                  id="combo-box-demo"
                   sx={{ marginTop: "5px" }}
                   options={workEquipment.map((item) => item.id)}
                   renderInput={(params) => <TextField {...params} label="ID" />}
-                  onChange={handleSelectionChange}
+                  onChange={handleIdChange}
                   size="small"
                 />
                 <TextField
                   variant="standard"
                   label="Tip"
                   sx={{ marginTop: "15px", width: "100%" }}
-                  value={selectedCit.tip}
+                  value={selectedEquipment.tip}
                   disabled
                 />
                 <TextField
                   variant="standard"
                   label="Marime"
                   sx={{ width: "100%" }}
-                  value={selectedCit.marime}
+                  value={selectedEquipment.marime}
                   disabled
-                />
-                <TextField
-                  variant="standard"
-                  label="Cantitate"
-                  name="cantitate"
-                  sx={{ width: "100%" }}
-                  value={selectedCit.cantitate}
-                  onChange={handleQuantityChange}
-                  required={true}
-                  error={!!validationErrors.cantitate}
-                  helperText={validationErrors.cantitate}
                 />
               </Box>
 
@@ -345,7 +351,7 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
               </Button>
             </Box>
           </Box>
-          <HandoverCreateModalTable dialogTableProps={dialogTableProps} />
+          <ReturDialogTable data={dialogTableProps} />
         </Box>
       </DialogContent>
       <DialogActions>
@@ -370,4 +376,4 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   );
 };
 
-export default HandoverCreateModalWEq;
+export default ReturnCreateModalWEq;

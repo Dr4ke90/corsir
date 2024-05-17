@@ -6,19 +6,19 @@ import {
   updateFisaRetur,
 } from "../../redux/slices/returSlice";
 import MuiTable from "../../components/MaterialUiTable/MuiTable";
-import ModalRetur from "./ReturnCreateModal";
+import ReturnCreateModal from "./ReturnCreateModal";
 import ModalDetaliiRetur from "./ReturnDetailsModal";
 import { RETUR_COLOANE_TABEL_PRINCIPAL } from "./Data/returnMaterialTableColumns";
 import { RETURN_FILE_INITIAL_STATE } from "./Data/returnFileInitialState";
+import { useLocation } from "react-router-dom";
+import ReturnCreateModalWEq from "./ReturnCreateModalWEq";
 
 function Return() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const retur = useSelector((state) => state.retur);
 
-  const data = useMemo(
-    () => (Array.isArray(retur) ? retur.slice().reverse() : []),
-    [retur]
-  );
+  const data = useMemo(() => retur.slice().reverse(), [retur]);
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
@@ -68,7 +68,14 @@ function Return() {
     <div className="retur-eq">
       <MuiTable props={tableProps} />
 
-      <ModalRetur open={isOpenCreateModal} dialogProps={dialogProps} />
+      {location.pathname.includes("tehnic") ? (
+        <ReturnCreateModalWEq
+          open={isOpenCreateModal}
+          dialogProps={dialogProps}
+        />
+      ) : (
+        <ReturnCreateModal open={isOpenCreateModal} dialogProps={dialogProps} />
+      )}
 
       <ModalDetaliiRetur
         open={isOpenModalDetalii}

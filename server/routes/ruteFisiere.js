@@ -102,9 +102,34 @@ const getNecesarTemplate = (req, res) => {
     });
   }
 
+
+  const getPvrWorkEqTemplate = (req, res) => {
+    const filePath = path.join(__dirname, "../resources/tampletes/retur-echip-lucru.docx");
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.on("open", () => {
+      res.setHeader("Content-Disposition", 'attachment; filename="retur-echip-lucru.docx"');
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      );
+  
+      fileStream.pipe(res);
+    });
+    fileStream.on("error", (err) => {
+      console.error("Error reading file:", err);
+      res.status(500).send("Error reading file");
+    });
+  
+    fileStream.on("close", () => {
+      console.log("File read successfully");
+    });
+  }
+
+
   module.exports = {
     getNecesarTemplate,
     getPvppTemplate,
     getPvrTemplate,
-    getPvppWorkEqTemplate
+    getPvppWorkEqTemplate,
+    getPvrWorkEqTemplate
   }

@@ -1,4 +1,4 @@
-export const RETURN_CREATE_MODAL_TABELE_COLUMNS = () => [
+export const RETURN_WEQ_CREATE_MODAL_TABLE_COLUMNS = () => [
   {
     accessorKey: "id",
     header: "ID",
@@ -9,21 +9,21 @@ export const RETURN_CREATE_MODAL_TABELE_COLUMNS = () => [
   {
     accessorKey: "tip",
     header: "Tip",
-    size: 80,
+    size: 60,
     grow: true,
     enableEditing: false,
   },
   {
-    accessorKey: "model", 
-    header: "Model",
-    size: 220,
+    accessorKey: "marime",
+    header: "Marime",
+    size: 40,
     grow: true,
     enableEditing: false,
   },
   {
-    accessorKey: "serie",
-    header: "Serie",
-    size: 130,
+    accessorKey: "cantitate",
+    header: "Cantitate",
+    size: 40,
     grow: true,
     enableEditing: false,
   },

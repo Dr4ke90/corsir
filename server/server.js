@@ -35,6 +35,7 @@ const {
   getPvrTemplate,
   getPvppTemplate,
   getPvppWorkEqTemplate,
+  getPvrWorkEqTemplate,
 } = require("./routes/ruteFisiere");
 const {
   getAllUsers,
@@ -143,10 +144,12 @@ app.delete("/coral/it/inventar/:fisa", deleteOneInventoryFile);
 app.get("/coral/it/templates/necesar.docx", getNecesarTemplate);
 
 app.get("/coral/it/templates/predare.docx", getPvppTemplate);
-
 app.get("/coral/it/templates/predare-echip-lucru.docx", getPvppWorkEqTemplate);
 
 app.get("/coral/it/templates/retur.docx", getPvrTemplate);
+app.get("/coral/it/templates/retur-echip-lucru.docx", getPvrWorkEqTemplate);
+
+
 
 // API Locations
 app.get("/coral/api/locations", getAllLocations);
