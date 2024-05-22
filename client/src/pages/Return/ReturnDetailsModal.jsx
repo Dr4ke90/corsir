@@ -18,6 +18,8 @@ const ModalDetaliiRetur = ({ open, file, handleClose }) => {
 
   const equipment = useSelector((state) => state.echipament);
 
+  const equipmentColumns = RETURN_DETAILS_TABLE_COLUMNS()
+
   const [eqList, setEqList] = useState([]);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ const ModalDetaliiRetur = ({ open, file, handleClose }) => {
         <hr />
         <DialogTitle> Informatii echipament </DialogTitle>
         <Box className="echipament">
-          <DetailsTable data={eqList} columns={RETURN_DETAILS_TABLE_COLUMNS} />
+          <DetailsTable data={eqList} columns={equipmentColumns} />
         </Box>
       </DialogContent>
       <DialogActions>

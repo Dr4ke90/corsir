@@ -27,6 +27,8 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
   const dbEquipmentList = useSelector((state) => state.echipament);
   const locatii = useSelector((state) => state.locatii);
 
+  const equipmentColumns = DIALOG_TABLE_COLUMNS()
+
   const handleUpdateEquipment = ({ values, table }) => {
     dispatch(updateEchipament({ ...values, inventar: formatDate(new Date()) }));
 
@@ -88,7 +90,7 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
         <Box className="echipament">
           <DetailsTable
             data={eqList}
-            columns={DIALOG_TABLE_COLUMNS}
+            columns={equipmentColumns}
             locatii={locatii.map((item) => item.proiect)}
             handleUpdateEquipment={handleUpdateEquipment}
             handleCloseInventory={handleCloseInventory}

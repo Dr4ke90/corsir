@@ -7,7 +7,7 @@ export const MODULES = [
   { departament: "unic", name: "angajati" },
   { departament: "it", name: "telefoane" },
   { departament: "it", name: "inventar" },
-  { departament: "tehnic", name: "echipament-lucru" },
+  { departament: "tehnic", name: "echipament" },
   { departament: "tehnic", name: "predare" },
   { departament: "tehnic", name: "retur" },
 ];

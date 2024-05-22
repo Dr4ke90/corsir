@@ -3,14 +3,12 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import { useLocation } from "react-router-dom";
 import { Button, Box } from "@mui/material";
 import { formatDate } from "../../utils/formatDate";
 
 const DetailsTable = ({
   data,
   columns,
-  locatii,
   handleUpdateEquipment,
   handleCloseInventory,
   file,
@@ -28,7 +26,6 @@ const DetailsTable = ({
   const [stare, setStare] = useState(null);
 
   const [onCreateMode, setOnCreateMode] = useState(false);
-
 
   useEffect(() => {
     if (file) {
@@ -50,9 +47,6 @@ const DetailsTable = ({
     }
   }, [data, stare]);
 
-  const location = useLocation();
-
-  
   const handleCreateUser = async ({ values, table }) => {
     const findedEquipment = dbEquipmentList.find(
       (item) => item.cit === values.cit
@@ -60,7 +54,7 @@ const DetailsTable = ({
 
     if (findedEquipment) {
       setEquipmentList((prev) => {
-        return [findedEquipment, ...prev]; 
+        return [findedEquipment, ...prev];
       });
     } else {
       return;
@@ -70,7 +64,7 @@ const DetailsTable = ({
   };
 
   const table = useMaterialReactTable({
-    columns: columns(locatii, onCreateMode),
+    columns,
     data: equipmentList,
     enablePagination: true,
     onPaginationChange: setPagination,

@@ -4,5 +4,7 @@ export function handoverValidateInputs(obj) {
     cantitate: !validateRequired(obj.cantitate)
       ? "Cantitatea este obligatorie"
       : "",
+    stare: !validateRequired(obj.stare) ? "Starea este obligatorie" : "",
+    id: !validateRequired(obj.id) ? "Selectati ID" : "",
   };
 }

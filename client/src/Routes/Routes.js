@@ -26,7 +26,7 @@ const AppRoutes = () => {
       <Route path="/angajati" element={<Employees />} />
       <Route path="/locatii" element={<Locations />} />
       <Route path="/telefoane-it" element={<MobilePhones />} />
-      <Route path="/echipament-lucru-tehnic" element={<WorkEquipment />} />
+      <Route path="/echipament-tehnic" element={<WorkEquipment />} />
     </Routes>
   );
 };

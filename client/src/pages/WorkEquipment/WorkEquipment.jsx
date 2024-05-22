@@ -18,8 +18,6 @@ function WorkEquipment() {
 
   const data = useSelector((state) => state.workEquipmentList);
 
-  const locations = useSelector((state) => state.locatii);
-
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
   const [isOpenModalDetalii, setIsOpenModalDetalii] = useState(false);

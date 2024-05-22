@@ -22,6 +22,7 @@ import { WORK_EQUIPMENT_INITIAL_STATE } from "../WorkEquipment/Data/workEquipmen
 import { handoverValidateInputs } from "./Func/handoverValidateInputs";
 import { useHandoverUpdateEmployee } from "./Func/useHandoverUpdateEmployee";
 import { useHandoverUpdateEquipment } from "./Func/useHandoverUpdateEquipment";
+import { handoverValidateFileData } from "./Func/handoverValidateFileData";
 
 const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
@@ -38,6 +39,8 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
 
   const [fisa, setFisa] = useState(HANDOVER_FILE_INITIAL_STATE);
   const [selectedCit, setSelectedCit] = useState(WORK_EQUIPMENT_INITIAL_STATE);
+  const [quantity, setQuantity] = useState("");
+  const [state, setState] = useState("");
 
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -58,26 +61,36 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
       fisa: createFileNumber(data, "P"),
       data: formatDate(new Date()),
       predator: user.nume,
+      dep: "tehnic",
     }));
   }, [data, user.nume]);
 
   useEffect(() => {
     setAddedEquipment(() => {
-      const updatedList = workEquipment
-        .map((eq) => {
-          const matchingItem = fisa.echipament.find(
-            (item) => item.id === eq.id
-          );
-          if (matchingItem) {
-            return {
-              ...eq,
-              cantitate: matchingItem.cantitate,
-            };
-          }
+      const updatedList = workEquipment.map((eq) => {
+        // Găsim toate echipamentele din `fisa.echipament` care au același `id`
+        const matchingItems = fisa.echipament.filter(
+          (item) => item.id === eq.id
+        );
+
+        if (matchingItems.length === 0) {
           return eq;
-        })
-        .filter((eq) => fisa.echipament.some((item) => item.id === eq.id));
-      return updatedList;
+        }
+
+        return matchingItems.map((item) => ({
+          ...eq,
+          cantitate: item.cantitate,
+          stare: item.stare,
+        }));
+      });
+
+      const flattenedList = updatedList.flat();
+
+      const filteredList = flattenedList.filter((eq) =>
+        fisa.echipament.some((item) => item.id === eq.id)
+      );
+
+      return filteredList;
     });
   }, [fisa.echipament, workEquipment]);
 
@@ -95,12 +108,20 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   }, [fisa.primitor, angajati]);
 
   const handleCreateFile = async () => {
+    const newValidationErrors = handoverValidateFileData(fisa);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     if (fisa.echipament.length === 0) return;
 
     let response = await dispatch(addFisaPredare(fisa));
 
     if (response.meta.requestStatus === "fulfilled") {
-      handoverUpdateEquipment(workEquipment, fisa);
+      handoverUpdateEquipment(addedEquipment, fisa);
 
       handoverUpdateEmployee(angajati, fisa);
 
@@ -125,7 +146,11 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   };
 
   const handleAdaugaEchipament = () => {
-    const newValidationErrors = handoverValidateInputs(selectedCit);
+    const newValidationErrors = handoverValidateInputs({
+      ...selectedCit,
+      cantitate: quantity,
+      stare: state,
+    });
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       console.log("Toate campurile sunt obligatorii");
@@ -135,20 +160,27 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
 
     setFisa((prev) => {
       const findItem = prev.echipament.find(
-        (item) => item.id === selectedCit.id
+        (item) => item.id === selectedCit.id && item.stare === state
       );
+
       if (findItem) return prev;
 
       return {
         ...prev,
         echipament: [
           ...prev.echipament,
-          { id: selectedCit.id, cantitate: selectedCit.cantitate },
+          {
+            id: selectedCit.id,
+            cantitate: quantity,
+            stare: state,
+          },
         ],
       };
     });
 
     setSelectedCit(WORK_EQUIPMENT_INITIAL_STATE);
+    setQuantity("");
+    setState("");
   };
 
   const handleRemoveEquipment = (itemID) => {
@@ -162,13 +194,12 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
 
   const handleQuantityChange = (e) => {
     const { value } = e.target;
+    setQuantity(value);
+  };
 
-    setSelectedCit((prev) => {
-      return {
-        ...prev,
-        cantitate: value,
-      };
-    });
+  const handleStateChange = (event, newValue) => {
+    if (newValue === null) return;
+    setState(newValue);
   };
 
   const dialogTableProps = {
@@ -268,7 +299,20 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
                 .filter((item) => !item.nume.includes(fisa.predator))
                 .map((user) => user.nume)}
               renderInput={(params) => (
-                <TextField {...params} label="Primitor" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Primitor"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.primitor}
+                  helperText={validationErrors.primitor}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      primitor: undefined,
+                    })
+                  }
+                />
               )}
               onChange={(event, newValue) => {
                 if (newValue) {
@@ -280,11 +324,25 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
                   });
                 }
               }}
+              value={fisa.primitor}
             />
             <Autocomplete
               options={locatii.map((loc) => loc.proiect)}
               renderInput={(params) => (
-                <TextField {...params} label="Locatie" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Locatie"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.locatie}
+                  helperText={validationErrors.locatie}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      locatie: undefined,
+                    })
+                  }
+                />
               )}
               onChange={(event, newValue) => {
                 if (newValue) {
@@ -305,9 +363,24 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
                   disablePortal
                   sx={{ marginTop: "5px" }}
                   options={workEquipment.map((item) => item.id)}
-                  renderInput={(params) => <TextField {...params} label="ID" />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="ID"
+                      required={true}
+                      error={!!validationErrors.id}
+                      helperText={validationErrors.id}
+                      onFocus={() =>
+                        setValidationErrors({
+                          ...validationErrors,
+                          id: undefined,
+                        })
+                      }
+                    />
+                  )}
                   onChange={handleSelectionChange}
                   size="small"
+                  value={selectedCit.id}
                 />
                 <TextField
                   variant="standard"
@@ -328,11 +401,42 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
                   label="Cantitate"
                   name="cantitate"
                   sx={{ width: "100%" }}
-                  value={selectedCit.cantitate}
+                  value={quantity}
                   onChange={handleQuantityChange}
                   required={true}
                   error={!!validationErrors.cantitate}
                   helperText={validationErrors.cantitate}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      cantitate: undefined,
+                    })
+                  }
+                />
+
+                <Autocomplete
+                  disablePortal
+                  sx={{ marginTop: "5px" }}
+                  options={["Nou", "Uzat"].map((item) => item)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Stare"
+                      variant="standard"
+                      required={true}
+                      error={!!validationErrors.stare}
+                      helperText={validationErrors.stare}
+                      onFocus={() =>
+                        setValidationErrors({
+                          ...validationErrors,
+                          stare: undefined,
+                        })
+                      }
+                    />
+                  )}
+                  onChange={handleStateChange}
+                  size="small"
+                  value={state}
                 />
               </Box>
 

@@ -27,4 +27,11 @@ export const HANDOVER_WEQ_CREATE_MODAL_TABLE_COLUMNS = () => [
     grow: true,
     enableEditing: false,
   },
+  {
+    accessorKey: "stare",
+    header: "Stare",
+    size: 40,
+    grow: true,
+    enableEditing: false,
+  },
 ];

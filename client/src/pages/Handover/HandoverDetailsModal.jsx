@@ -12,29 +12,36 @@ import { useEffect, useState } from "react";
 import { fetchEchipament } from "../../redux/slices/echipSlice";
 import DetailsTable from "../../components/DetailsTable/DetailsTable";
 import { PREDARE_MODAL_DETALII_COLUMNS } from "./Data/handoverDetailsModalTableColumns";
+import { fetchWorkEquipmentList } from "../../redux/slices/workEquipmentSlice";
 
 const HandoverDetailsModal = ({ open, file, handleClose }) => {
   const dispatch = useDispatch();
 
   const equipment = useSelector((state) => state.echipament);
+  const workEquipment = useSelector((state) => state.workEquipmentList);
+
+  const columns = PREDARE_MODAL_DETALII_COLUMNS(file);
 
   const [eqList, setEqList] = useState([]);
 
   useEffect(() => {
     dispatch(fetchEchipament());
+    dispatch(fetchWorkEquipmentList());
   }, [dispatch]);
 
   useEffect(() => {
     if (file) {
-      const addedEq = equipment.filter((item) =>
-        file.echipament.includes(item.id)
+      const addedEq = [...equipment, ...workEquipment].filter((item) =>
+        file.echipament.some((eq) => eq.id === item.id)
       );
+
+      console.log(addedEq);
 
       setEqList(addedEq);
     } else {
       setEqList([]);
     }
-  }, [file, equipment]);
+  }, [file, equipment, workEquipment]);
 
   return (
     <Dialog open={open} maxWidth="lg" fullWidth={true}>
@@ -60,14 +67,14 @@ const HandoverDetailsModal = ({ open, file, handleClose }) => {
                 />
               );
             } else {
-              return null
+              return null;
             }
           })}
         </Box>
         <hr />
         <DialogTitle> Informatii echipament </DialogTitle>
         <Box className="echipament">
-          <DetailsTable data={eqList} columns={PREDARE_MODAL_DETALII_COLUMNS} />
+          <DetailsTable data={eqList} columns={columns} />
         </Box>
       </DialogContent>
       <DialogActions>

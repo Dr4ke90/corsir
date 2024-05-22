@@ -27,4 +27,11 @@ export const PREDARE_DIALOG_TABLE_COLUMNS = () => [
     grow: true,
     enableEditing: false,
   },
+  {
+    accessorKey: "stare",
+    header: "Stare",
+    size: 130,
+    grow: true,
+    enableEditing: false,
+  },
 ];

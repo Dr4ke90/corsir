@@ -14,6 +14,8 @@ import { SUPPLY_CHECKLIST_DETAILS_MODAL_COLUMNS } from "./Data/supplyChecklistDe
 const NecesarModalDetalii = ({ open, file, handleClose }) => {
   const [eqList, setEqList] = useState([]);
 
+  const columns = SUPPLY_CHECKLIST_DETAILS_MODAL_COLUMNS()
+
   useEffect(() => {
     if (file) {
       setEqList(file.echipament);
@@ -55,7 +57,7 @@ const NecesarModalDetalii = ({ open, file, handleClose }) => {
         <Box className="echipament">
           <DetailsTable
             data={eqList}
-            columns={SUPPLY_CHECKLIST_DETAILS_MODAL_COLUMNS}
+            columns={columns}
           />
         </Box>
       </DialogContent>

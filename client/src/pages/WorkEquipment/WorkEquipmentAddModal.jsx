@@ -7,7 +7,7 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { INVOICE_INITIAL_STATE } from "../../data/invoiceInitialState";
 import { WORK_EQUIPMENT_INITIAL_STATE } from "./Data/workEquipmentInitialState";
@@ -33,10 +33,6 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
   const [workEquipmentState, setWorkEquipmentState] = useState(
     WORK_EQUIPMENT_INITIAL_STATE
   );
-
-  useEffect(() => {
-    console.log(workEquipmentState);
-  }, [workEquipmentState]);
 
   const [tip, setTip] = useState("");
 
@@ -66,9 +62,9 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
           ...infoInvoiceState,
           id: createNewId({ ...workEquipmentState, tip: tip }),
           tip: tip,
-          stare: "Nou",
           locatie: "Coral Bussiness Center",
           persoana: "Andreea Iorgulescu",
+          dep: "tehnic",
         },
       ];
     });
@@ -125,9 +121,11 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
 
     workEquipmentList.forEach((equipment) => {
       const matchingData = data.find((item) => item.id === equipment.id);
+
       if (matchingData) {
         const updatedQuantity =
           parseInt(matchingData.stocNou) + parseInt(equipment.stocNou);
+
         dispatch(
           updateWorkEquipment({
             ...matchingData,
@@ -148,7 +146,14 @@ const WorkEquipmentAddModal = ({ open, dialogProps }) => {
           addWorkEquipment({
             ...infoInvoiceState,
             ...equipment,
-            intrari: [infoInvoiceState],
+            intrari: [
+              {
+                ...infoInvoiceState,
+                receptie: loggedUser.nume,
+                cantitate: equipment.stocNou,
+                pret: equipment.pret,
+              },
+            ],
           })
         );
       }

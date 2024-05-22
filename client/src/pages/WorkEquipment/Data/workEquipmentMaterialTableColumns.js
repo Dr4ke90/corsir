@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-import { WORK_EQUIPMENT_STATE_SELECTION } from "./workEquipmentStateSelection";
 
 export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
   const loggedUser = useSelector((state) => state.users.loggedUser);
@@ -72,17 +71,26 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
       },
     },
     {
-      accessorKey: "stare",
-      header: "Stare",
-      size: 80,
+      id: "achizitie",
+      accessorFn: (row) => row.intrari[row.intrari.length - 1]?.achizitie,
+      header: "Ultima intrare",
+      size: 100,
       grow: true,
-      required: true,
       enableEditing: true,
-
-      editSelectOptions: WORK_EQUIPMENT_STATE_SELECTION,
-      muiEditTextFieldProps: {
-        select: true,
+      enableClickToCopy: true,
+      muiCopyButtonProps: {
+        fullWidth: true,
+        // startIcon: <ContentCopy />,
+        sx: { justifyContent: "flex-start" },
       },
+    },
+    {
+      id: "inventar",
+      accessorFn: (row) => row.inventar[row.inventar.length - 1]?.data,
+      header: "Ultimul inventar",
+      size: 100,
+      grow: true,
+      enableEditing: true,
       enableClickToCopy: true,
       muiCopyButtonProps: {
         fullWidth: true,

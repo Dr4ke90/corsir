@@ -23,6 +23,10 @@ const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
   const handover = useSelector((state) => state.predare);
   const retur = useSelector((state) => state.retur);
 
+  const inputsColumns = WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS();
+  const exitsColumns = WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS(file);
+  const inventoryColumns = INV_TABLE_COLUMNS();
+
   const [pv, setPv] = useState([]);
 
   useEffect(() => {
@@ -72,10 +76,20 @@ const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
                   <TextField
                     key={key}
                     variant="filled"
-                    value={key !== "pv" ? value : value.length.toString()}
+                    value={
+                      key !== "pv" && key !== "intrari" && key !== "inventar"
+                        ? value
+                        : value.length.toString()
+                    }
                     label={
                       key === "pv"
-                        ? "Procese Verbale"
+                        ? "Iesiri"
+                        : key.slice(0, 1).toUpperCase() + key.slice(1) &&
+                          key === "stocNou"
+                        ? "Stoc (NOU)"
+                        : key.slice(0, 1).toUpperCase() + key.slice(1) &&
+                          key === "stocUzat"
+                        ? "Stoc (UZAT)"
                         : key.slice(0, 1).toUpperCase() + key.slice(1)
                     }
                     size="small"
@@ -93,28 +107,22 @@ const WorkEquipmentDetailsModal = ({ open, file, handleClose }) => {
         <hr />
         <Box className="mp-pvInfo">
           <DialogTitle> Intrari </DialogTitle>
-          <DetailsTable
-            data={file.intrari}
-            columns={WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS}
-          />
+          <DetailsTable data={file.intrari} columns={inputsColumns} />
         </Box>
         <hr />
         <Box className="mp-pvInfo">
           <DialogTitle> Iesiri </DialogTitle>
-          <DetailsTable
-            data={pv}
-            columns={WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS}
-          />
+          <DetailsTable data={pv} columns={exitsColumns} />
         </Box>
         <hr />
         <Box className="mp-inventory">
           <DialogTitle> Inventare </DialogTitle>
-          <DetailsTable data={file.inventar} columns={INV_TABLE_COLUMNS} />
+          <DetailsTable data={file.inventar} columns={inventoryColumns} />
         </Box>
         <hr />
         <Box className="mp-notice">
           <DialogTitle> Observatii </DialogTitle>
-          <Notice file={file} />
+          <Notice equipment={file} />
         </Box>
       </DialogContent>
 

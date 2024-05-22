@@ -22,6 +22,9 @@ const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
   const handover = useSelector((state) => state.predare);
   const retur = useSelector((state) => state.retur);
 
+  const exitsColumns = MOBILE_PHONES_DETAILS_MODAL_PV_COLUMNS()
+  const inventarSlice = INV_TABLE_COLUMNS()
+
   const [pv, setPv] = useState([]);
 
   useEffect(() => {
@@ -96,13 +99,13 @@ const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
           <DialogTitle> Informatii procese verbale </DialogTitle>
           <DetailsTable
             data={pv}
-            columns={MOBILE_PHONES_DETAILS_MODAL_PV_COLUMNS}
+            columns={exitsColumns}
           />
         </Box>
         <hr />
         <Box className="mp-inventory">
           <DialogTitle> Lista inventare </DialogTitle>
-          <DetailsTable data={[]} columns={INV_TABLE_COLUMNS} />
+          <DetailsTable data={[]} columns={inventarSlice} />
         </Box>
         <hr />
         <Box className="mp-notice">

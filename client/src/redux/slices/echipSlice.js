@@ -176,6 +176,7 @@ export const updateEchipmentGroup = createAsyncThunk(
 export const deleteEchipament = createAsyncThunk(
   "echipament/deleteEchipament",
   async (echipamentId) => {
+    console.log(echipamentId)
     try {
       const response = await axios.delete(
         `http://localhost:3000/coral/it/echipament/${echipamentId}`

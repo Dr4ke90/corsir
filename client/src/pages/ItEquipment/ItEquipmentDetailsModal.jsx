@@ -23,6 +23,10 @@ const ModalDetaliiEchipament = ({ open, file, handleClose }) => {
   const handover = useSelector((state) => state.predare);
   const retur = useSelector((state) => state.retur);
 
+  const exitsColumns = IT_EQUIP_DETAILS_MODAL_PV_COLUMNS();
+  const serviceColumns = IT_EQUIP_DETAILS_MODAL_SERVICE_COLUMNS();
+  const inventoryColumns = INV_TABLE_COLUMNS();
+
   const [pv, setPv] = useState([]);
 
   useEffect(() => {
@@ -75,7 +79,7 @@ const ModalDetaliiEchipament = ({ open, file, handleClose }) => {
                     value={key !== "pv" ? value : value.length.toString()}
                     label={
                       key === "pv"
-                        ? "Procese Verbale"
+                        ? "Iesiri"
                         : key.slice(0, 1).toUpperCase() + key.slice(1)
                     }
                     size="small"
@@ -90,23 +94,21 @@ const ModalDetaliiEchipament = ({ open, file, handleClose }) => {
             })}
           </Box>
         </Box>
+
         <hr />
         <Box className="eq-pvInfo">
-          <DialogTitle> Informatii procese verbale </DialogTitle>
-          <DetailsTable data={pv} columns={IT_EQUIP_DETAILS_MODAL_PV_COLUMNS} />
+          <DialogTitle> Iesiri </DialogTitle>
+          <DetailsTable data={pv} columns={exitsColumns} />
         </Box>
         <hr />
         <Box className="eq-service">
-          <DialogTitle> Service echipament </DialogTitle>
-          <DetailsTable
-            data={pv}
-            columns={IT_EQUIP_DETAILS_MODAL_SERVICE_COLUMNS}
-          />
+          <DialogTitle> Service-uri </DialogTitle>
+          <DetailsTable data={[]} columns={serviceColumns} />
         </Box>
         <hr />
         <Box className="eq-inventory">
-          <DialogTitle> Lista inventare </DialogTitle>
-          <DetailsTable data={[]} columns={INV_TABLE_COLUMNS} />
+          <DialogTitle> Inventare </DialogTitle>
+          <DetailsTable data={[]} columns={inventoryColumns} />
         </Box>
         <hr />
         <Box className="eq-service">

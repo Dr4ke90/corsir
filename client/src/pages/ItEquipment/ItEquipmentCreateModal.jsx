@@ -88,7 +88,6 @@ const ModalEquipment = ({ open, dialogProps }) => {
       stare: "Nou",
       locatie: "Coral Bussiness Center",
       persoana: "IT",
-      inventar: infoInvoiceState.achizitie,
       pret: parseFloat(equipState.pret),
     };
   };

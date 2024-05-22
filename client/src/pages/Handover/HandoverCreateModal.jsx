@@ -14,10 +14,7 @@ import {
   fetchEchipament,
   updateEchipament,
 } from "../../redux/slices/echipSlice";
-import {
-  fetchLocations,
-  updateLocation,
-} from "../../redux/slices/locationsSlice";
+import { fetchLocations } from "../../redux/slices/locationsSlice";
 import { handleFetchFile } from "../../utils/fetchDoecument";
 import { addFisaPredare } from "../../redux/slices/predareSlice";
 import { formatDate } from "../../utils/formatDate";
@@ -29,6 +26,7 @@ import {
   updateMobilePhones,
 } from "../../redux/slices/mobilePhonesSlice";
 import HandoverCreateModalTable from "./HandoverCreateModalTable";
+import { handoverValidateFileData } from "./Func/handoverValidateFileData";
 
 const HandoverCreateModal = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
@@ -47,6 +45,8 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
   const [addedEquipment, setAddedEquipment] = useState([]);
 
+  const [validationErrors, setValidationErrors] = useState({});
+
   const fileUrl = "http://localhost:3000/coral/it/templates/predare.docx";
 
   useEffect(() => {
@@ -62,6 +62,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
       fisa: createFileNumber(data, "P"),
       data: formatDate(new Date()),
       predator: user.nume,
+      dep: "it",
     }));
   }, [data, user.nume]);
 
@@ -70,7 +71,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
       const combinedList = [...echipament, ...mobilePhones];
 
       const updatedList = combinedList.filter((eq) => {
-        return fisa.echipament.some((id) => id === eq.id);
+        return fisa.echipament.some((addedEq) => addedEq.id === eq.id);
       });
       return [...updatedList];
     });
@@ -90,6 +91,14 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
   }, [fisa.primitor, angajati]);
 
   const handleCreateFile = async () => {
+    const newValidationErrors = handoverValidateFileData(fisa);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     if (fisa.echipament.length === 0) return;
 
     let response = await dispatch(
@@ -100,11 +109,11 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
     );
 
     if (response.meta.requestStatus === "fulfilled") {
-      fisa.echipament.forEach((id) => {
+      fisa.echipament.forEach((eq) => {
         const combinedEquipment = [...echipament, ...mobilePhones];
 
         const filteredEquipments = combinedEquipment.filter(
-          (item) => item.id === id
+          (item) => item.id === eq.id
         );
 
         filteredEquipments.forEach((eq) => {
@@ -135,15 +144,7 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
           })
         );
       } else {
-        const locatie = locatii.find(
-          (locatie) => locatie.proiect === fisa.locatie
-        );
-        dispatch(
-          updateLocation({
-            ...locatie,
-            echipamente: [...locatie.echipamente, ...fisa.echipament],
-          })
-        );
+        return;
       }
 
       handleFetchFile(fileUrl, { ...fisa, echipament: [...addedEquipment] });
@@ -164,10 +165,16 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
 
   const handleAdaugaEchipament = () => {
     setFisa((prev) => {
-      const findItem = prev.echipament.find((id) => id === selectedCit.id);
+      const findItem = prev.echipament.find((eq) => eq.id === selectedCit.id);
       if (findItem) return prev;
 
-      return { ...prev, echipament: [...prev.echipament, selectedCit.id] };
+      return {
+        ...prev,
+        echipament: [
+          ...prev.echipament,
+          { id: selectedCit.id, stare: selectedCit.stare },
+        ],
+      };
     });
   };
 
@@ -277,7 +284,20 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
                 .filter((item) => !item.nume.includes(fisa.predator))
                 .map((user) => user.nume)}
               renderInput={(params) => (
-                <TextField {...params} label="Primitor" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Primitor"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.primitor}
+                  helperText={validationErrors.primitor}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      primitor: undefined,
+                    })
+                  }
+                />
               )}
               onChange={(event, newValue) => {
                 if (newValue) {
@@ -289,11 +309,25 @@ const HandoverCreateModal = ({ open, dialogProps }) => {
                   });
                 }
               }}
+              value={fisa.primitor}
             />
             <Autocomplete
               options={locatii.map((loc) => loc.proiect)}
               renderInput={(params) => (
-                <TextField {...params} label="Locatie" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Locatie"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.locatie}
+                  helperText={validationErrors.locatie}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      locatie: undefined,
+                    })
+                  }
+                />
               )}
               onChange={(event, newValue) => {
                 if (newValue) {

@@ -43,8 +43,6 @@ function ItEquipment() {
   }, [dispatch]);
 
   const handleUpdateEquipment = async ({ values, table }) => {
-    console.log(values);
-
     let pret;
     if (values.pret === "N/A") {
       pret = "";
@@ -58,12 +56,11 @@ function ItEquipment() {
         pret: pret,
       })
     );
-
     table.setEditingRow(null);
   };
 
   const handleDeleteEquipment = (eq) => {
-    dispatch(deleteEchipament(eq.cit));
+    dispatch(deleteEchipament(eq.id));
   };
 
   const csvConfig = mkConfig({

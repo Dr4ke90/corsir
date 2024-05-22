@@ -16,7 +16,7 @@ const NecesarModalTable = ({ dialogTableProps }) => {
       {
         accessorKey: "echipament",
         header: "Echipament",
-        size: 300,
+        size: 200,
         grow: false,
         enableEditing: false,
       },
