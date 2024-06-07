@@ -73,13 +73,17 @@ const ReturnCreateModal = ({ open, dialogProps }) => {
   }, [data]);
 
   useEffect(() => {
+    console.log(fisa);
+  }, [fisa]);
+
+  useEffect(() => {
     setAddedEquipment(() => {
       const updatedList = echipament.filter((eq) => {
-        return fisa.echipament.some((id) => id === eq.id);
+        return fisa.echipament.some((item) => item.id === eq.id);
       });
       return [...updatedList];
     });
-  }, [fisa.echipament, echipament]);
+  }, [fisa.echipament]);
 
   useEffect(() => {
     if (selectedPv === null) return;
@@ -93,16 +97,24 @@ const ReturnCreateModal = ({ open, dialogProps }) => {
     delete updatedFile.fisa;
     delete updatedFile.data;
     delete updatedFile._id;
+
     setFisa((prev) => {
+      if (
+        prev.fisa === selectedFile.fisa &&
+        prev.primitor === updatedFile.predator &&
+        prev.predator === selectedFile.primitor
+      ) {
+        return prev;
+      }
       return {
         ...prev,
         ...updatedFile,
         predator: selectedFile.primitor,
         primitor: updatedFile.predator,
-        ...(selectedPv ? { pvPredare: selectedFile.fisa } : null),
+        pvPredare: selectedFile.fisa,
       };
     });
-  }, [selectedPv, predare]);
+  }, [selectedPv]);
 
   const handleChangePvPredare = (event, newValue) => {
     setSelectedPv(newValue);
@@ -123,10 +135,16 @@ const ReturnCreateModal = ({ open, dialogProps }) => {
     setValidationErrors({});
 
     setFisa((prev) => {
-      const findItem = prev.echipament.find((id) => id === selectedCit.id);
+      const findItem = prev.echipament.find((eq) => eq.id === selectedCit.id);
       if (findItem) return prev;
 
-      return { ...prev, echipament: [...prev.echipament, selectedCit.id] };
+      return {
+        ...prev,
+        echipament: [
+          ...prev.echipament,
+          { id: selectedCit.id, stare: selectedCit.stare },
+        ],
+      };
     });
   };
 
@@ -155,9 +173,9 @@ const ReturnCreateModal = ({ open, dialogProps }) => {
     if (response.meta.requestStatus === "fulfilled") {
       const combineEquipment = [...echipament, ...mobilePhones];
 
-      fisa.echipament.forEach((id) => {
+      fisa.echipament.forEach((eq) => {
         const filteredEquipments = combineEquipment.filter(
-          (item) => item.id === id
+          (item) => item.id === eq.id
         );
 
         filteredEquipments.forEach((item) => {
@@ -367,7 +385,6 @@ const ReturnCreateModal = ({ open, dialogProps }) => {
               <Box>
                 <Autocomplete
                   disablePortal
-                  id="combo-box-demo"
                   sx={{ marginTop: "5px" }}
                   options={echipament.map((item) => item.id)}
                   renderInput={(params) => (
