@@ -7,7 +7,7 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import DetailsTable from "../../components/DetailsTable/DetailsTable";
 import { DIALOG_TABLE_COLUMNS } from "./inventarDatas";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,7 +27,7 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
   const dbEquipmentList = useSelector((state) => state.echipament);
   const locatii = useSelector((state) => state.locatii);
 
-  const equipmentColumns = DIALOG_TABLE_COLUMNS()
+  const equipmentColumns = DIALOG_TABLE_COLUMNS();
 
   const handleUpdateEquipment = ({ values, table }) => {
     dispatch(updateEchipament({ ...values, inventar: formatDate(new Date()) }));
@@ -57,7 +57,7 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
     } else {
       setEqList([]);
     }
-  }, [file]);
+  }, [file, dbEquipmentList]);
 
   return (
     <Dialog open={open} maxWidth="xl" fullWidth={true}>
@@ -82,6 +82,8 @@ const ModalDetaliiInventar = ({ open, file, handleClose }) => {
                   label={key.slice(0, 1).toUpperCase() + key.slice(1)}
                 />
               );
+            } else {
+              return null;
             }
           })}
         </Box>

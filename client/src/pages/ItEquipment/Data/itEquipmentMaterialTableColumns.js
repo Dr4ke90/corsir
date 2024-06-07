@@ -107,7 +107,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
     {
       accessorKey: "stare",
       header: "Status",
-      size: 80,
+      size: 60,
       grow: true,
       required: true,
       enableEditing: true,
@@ -128,7 +128,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "persoana",
       header: "Persoana",
       enableEditing: loggedUser.superuser ? true : false,
-      size: 80,
+      size: 70,
       Edit: () => null,
       enableClickToCopy: true,
       muiCopyButtonProps: {
@@ -140,6 +140,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
     {
       accessorKey: "locatie",
       header: "Locatie",
+      size: 70,
       enableEditing: loggedUser.superuser ? true : false,
       editSelectOptions: Array.isArray(locations)
         ? locations.map((item) => item.proiect)

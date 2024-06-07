@@ -10,14 +10,14 @@ export const useReturnUpdateEmployee = () => {
     );
 
     if (predator) {
-      const updatedEchipamente = predator.echipamente.filter(
-        (eq) => !sheet.echipament.some((item) => item.id === eq)
+      const filteredEquipment = predator.echipamente.filter(
+        (eq) => !sheet.echipament.some((item) => item.id === eq.id)
       );
 
       dispatch(
         updateUser({
           ...predator,
-          echipamente: updatedEchipamente,
+          echipamente: filteredEquipment,
         })
       );
     }

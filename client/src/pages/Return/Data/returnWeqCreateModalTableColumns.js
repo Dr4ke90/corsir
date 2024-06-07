@@ -27,4 +27,11 @@ export const RETURN_WEQ_CREATE_MODAL_TABLE_COLUMNS = () => [
     grow: true,
     enableEditing: false,
   },
+  {
+    accessorKey: "stare",
+    header: "Stare",
+    size: 60,
+    grow: true,
+    enableEditing: false,
+  },
 ];

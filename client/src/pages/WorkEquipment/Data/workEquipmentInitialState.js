@@ -4,6 +4,7 @@ export const WORK_EQUIPMENT_INITIAL_STATE = {
   marime: "",
   stocNou: "",
   stocUzat: "",
+  predat: "",
   pret: "",
   intrari: [],
   pv: [],

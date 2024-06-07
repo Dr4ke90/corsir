@@ -68,7 +68,6 @@ const HandoverCreateModalWEq = ({ open, dialogProps }) => {
   useEffect(() => {
     setAddedEquipment(() => {
       const updatedList = workEquipment.map((eq) => {
-        // Găsim toate echipamentele din `fisa.echipament` care au același `id`
         const matchingItems = fisa.echipament.filter(
           (item) => item.id === eq.id
         );

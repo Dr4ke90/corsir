@@ -13,7 +13,7 @@ import DetailsTable from "../../components/DetailsTable/DetailsTable";
 import { fetchFisePredare } from "../../redux/slices/predareSlice";
 import { fetchFiseRetur } from "../../redux/slices/returSlice";
 import { INV_TABLE_COLUMNS } from "../ItInventory/inventarDatas";
-import Notice from "../../components/Notice/Noice";
+import Notice from "../../components/Notes/Notes";
 import { WORK_EQUIPMENT_DETAILS_MODAL_PV_COLUMNS } from "./Data/workEquipmentDetailsModalPvColumns";
 import { WORK_EQUIPMENT_DETAILS_MODAL_INPUTS_COLUMNS } from "./Data/workEquipmentDetailsModalInputsColumns";
 

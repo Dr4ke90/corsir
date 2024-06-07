@@ -15,7 +15,7 @@ import { fetchFiseRetur } from "../../redux/slices/returSlice";
 import { IT_EQUIP_DETAILS_MODAL_SERVICE_COLUMNS } from "./Data/itEquipDetailsModalServiceColumns";
 import { IT_EQUIP_DETAILS_MODAL_PV_COLUMNS } from "./Data/itEquipDetailsModalPvColumns";
 import { INV_TABLE_COLUMNS } from "../ItInventory/inventarDatas";
-import Notice from "../../components/Notice/Noice";
+import Notice from "../../components/Notes/Notes";
 
 const ModalDetaliiEchipament = ({ open, file, handleClose }) => {
   const dispatch = useDispatch();
@@ -113,7 +113,7 @@ const ModalDetaliiEchipament = ({ open, file, handleClose }) => {
         <hr />
         <Box className="eq-service">
           <DialogTitle> Observatii </DialogTitle>
-          <Notice file={file} />
+          <Notice equipment={file} />
         </Box>
       </DialogContent>
 

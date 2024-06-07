@@ -27,12 +27,17 @@ import {
   fetchMobilePhones,
   updateMobilePhones,
 } from "../../redux/slices/mobilePhonesSlice";
+import { returnValidateInputs } from "./Func/returnValidateInputs";
+import { returnValidateFileData } from "./Func/returnValidateFileData";
+import { useReturnUpdateEmployee } from "./Func/useReturnUpdateEmployee";
 
-const ModalRetur = ({ open, dialogProps }) => {
+const ReturnCreateModal = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
   const dispatch = useDispatch();
 
-  const predare = useSelector((state) => state.predare);
+  const predare = useSelector((state) => state.predare).filter(
+    (item) => item.dep === "it"
+  );
   const echipament = useSelector((state) => state.echipament);
   const locations = useSelector((state) => state.locatii);
   const employees = useSelector((state) => state.users.allUsers);
@@ -41,7 +46,11 @@ const ModalRetur = ({ open, dialogProps }) => {
   const [fisa, setFisa] = useState(RETURN_FILE_INITIAL_STATE);
   const [selectedCit, setSelectedCit] = useState(IT_EQUIPMENT_INITIAL_STATE);
 
+  const returnUpdateEmployee = useReturnUpdateEmployee();
+
   const [addedEquipment, setAddedEquipment] = useState([]);
+
+  const [validationErrors, setValidationErrors] = useState({});
 
   const fileUrl = "http://localhost:3000/coral/it/templates/retur.docx";
 
@@ -90,7 +99,7 @@ const ModalRetur = ({ open, dialogProps }) => {
         ...updatedFile,
         predator: selectedFile.primitor,
         primitor: updatedFile.predator,
-        pvPredare: selectedFile.fisa,
+        ...(selectedPv ? { pvPredare: selectedFile.fisa } : null),
       };
     });
   }, [selectedPv, predare]);
@@ -105,6 +114,14 @@ const ModalRetur = ({ open, dialogProps }) => {
   };
 
   const handleAdaugaEchipament = () => {
+    const newValidationErrors = returnValidateInputs(selectedCit);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     setFisa((prev) => {
       const findItem = prev.echipament.find((id) => id === selectedCit.id);
       if (findItem) return prev;
@@ -123,6 +140,14 @@ const ModalRetur = ({ open, dialogProps }) => {
   };
 
   const handleCreateFile = async () => {
+    const newValidationErrors = returnValidateFileData(fisa);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     if (fisa.echipament.length === 0) return;
 
     const response = await dispatch(addFisaRetur(fisa));
@@ -151,20 +176,7 @@ const ModalRetur = ({ open, dialogProps }) => {
         });
       });
 
-      const predator = employees.find(
-        (angajat) => angajat.nume === fisa.predator
-      );
-
-      if (predator) {
-        dispatch(
-          updateUser({
-            ...predator,
-            echipamente: predator.echipamente.filter(
-              (e) => !fisa.echipament.includes(e)
-            ),
-          })
-        );
-      }
+      returnUpdateEmployee(employees, fisa);
 
       handleFetchFile(fileUrl, { ...fisa, echipament: [...addedEquipment] });
     } else {
@@ -262,7 +274,20 @@ const ModalRetur = ({ open, dialogProps }) => {
             <Autocomplete
               options={employees.map((employee) => employee.nume)}
               renderInput={(params) => (
-                <TextField {...params} label="Predator" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Predator"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.predator}
+                  helperText={validationErrors.predator}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      predator: undefined,
+                    })
+                  }
+                />
               )}
               value={fisa.predator}
               onChange={(event, newValue) => {
@@ -279,7 +304,20 @@ const ModalRetur = ({ open, dialogProps }) => {
             <Autocomplete
               options={employees.map((employee) => employee.nume)}
               renderInput={(params) => (
-                <TextField {...params} label="Primitor" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Primitor"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.primitor}
+                  helperText={validationErrors.primitor}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      primitor: undefined,
+                    })
+                  }
+                />
               )}
               value={fisa.primitor}
               onChange={(event, newValue) => {
@@ -297,7 +335,20 @@ const ModalRetur = ({ open, dialogProps }) => {
             <Autocomplete
               options={locations.map((loc) => loc.proiect)}
               renderInput={(params) => (
-                <TextField {...params} label="Locatie" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Locatie"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.locatie}
+                  helperText={validationErrors.locatie}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      locatie: undefined,
+                    })
+                  }
+                />
               )}
               onChange={(event, newValue) => {
                 if (newValue) {
@@ -320,7 +371,19 @@ const ModalRetur = ({ open, dialogProps }) => {
                   sx={{ marginTop: "5px" }}
                   options={echipament.map((item) => item.id)}
                   renderInput={(params) => (
-                    <TextField {...params} label="ID" />
+                    <TextField
+                      {...params}
+                      label="ID"
+                      required={true}
+                      error={!!validationErrors.id}
+                      helperText={validationErrors.id}
+                      onFocus={() =>
+                        setValidationErrors({
+                          ...validationErrors,
+                          id: undefined,
+                        })
+                      }
+                    />
                   )}
                   onChange={handleCitChange}
                   size="small"
@@ -382,4 +445,4 @@ const ModalRetur = ({ open, dialogProps }) => {
   );
 };
 
-export default ModalRetur;
+export default ReturnCreateModal;

@@ -14,7 +14,7 @@ import { fetchFisePredare } from "../../redux/slices/predareSlice";
 import { fetchFiseRetur } from "../../redux/slices/returSlice";
 import { MOBILE_PHONES_DETAILS_MODAL_PV_COLUMNS } from "./Data/mobilePhonesDetailsModalPvColumns";
 import { INV_TABLE_COLUMNS } from "../ItInventory/inventarDatas";
-import Notice from "../../components/Notice/Noice";
+import Notice from "../../components/Notes/Notes";
 
 const MobilePhonesDetailsModal = ({ open, file, handleClose }) => {
   const dispatch = useDispatch();

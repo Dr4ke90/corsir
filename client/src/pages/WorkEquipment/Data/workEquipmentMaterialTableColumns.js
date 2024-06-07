@@ -21,7 +21,7 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
     {
       accessorKey: "tip",
       header: "Tip",
-      size: 180,
+      size: 110,
       grow: true,
       enableEditing: loggedUser.superuser ? true : false,
       enableClickToCopy: true,
@@ -34,7 +34,7 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
     {
       accessorKey: "marime",
       header: "Marime",
-      size: 100,
+      size: 60,
       grow: true,
       enableEditing: loggedUser.superuser ? true : false,
       enableClickToCopy: true,
@@ -47,7 +47,7 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
     {
       accessorKey: "stocNou",
       header: "Stoc (NOU)",
-      size: 100,
+      size: 60,
       grow: true,
       enableEditing: true,
       enableClickToCopy: true,
@@ -60,7 +60,20 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
     {
       accessorKey: "stocUzat",
       header: "Stoc (UZAT)",
-      size: 100,
+      size: 60,
+      grow: true,
+      enableEditing: true,
+      enableClickToCopy: true,
+      muiCopyButtonProps: {
+        fullWidth: true,
+        // startIcon: <ContentCopy />,
+        sx: { justifyContent: "flex-start" },
+      },
+    },
+    {
+      accessorKey: "predat",
+      header: "Predat",
+      size: 60,
       grow: true,
       enableEditing: true,
       enableClickToCopy: true,
@@ -74,7 +87,7 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
       id: "achizitie",
       accessorFn: (row) => row.intrari[row.intrari.length - 1]?.achizitie,
       header: "Ultima intrare",
-      size: 100,
+      size: 90,
       grow: true,
       enableEditing: true,
       enableClickToCopy: true,
@@ -87,8 +100,8 @@ export const WORK_EQUIPMENT_MATERIAL_TABLE_COLUMNS = () => {
     {
       id: "inventar",
       accessorFn: (row) => row.inventar[row.inventar.length - 1]?.data,
-      header: "Ultimul inventar",
-      size: 100,
+      header: "Ultimul Inv.",
+      size: 90,
       grow: true,
       enableEditing: true,
       enableClickToCopy: true,

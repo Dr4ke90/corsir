@@ -7,13 +7,11 @@ export const useHandoverUpdateEmployee = () => {
   const handoverUpdateEmployee = (angajati, fisa) => {
     const primitor = angajati.find((angajat) => angajat.nume === fisa.primitor);
 
-    const filtered = fisa.echipament.map((eq) => eq.id);
-
     if (primitor) {
       dispatch(
         updateUser({
           ...primitor,
-          echipamente: [...primitor.echipamente, ...filtered],
+          echipamente: [...primitor.echipamente, ...fisa.echipament],
         })
       );
     } else {

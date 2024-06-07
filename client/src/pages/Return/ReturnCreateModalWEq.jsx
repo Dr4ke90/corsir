@@ -26,13 +26,17 @@ import {
   updateWorkEquipment,
 } from "../../redux/slices/workEquipmentSlice";
 import { useReturnUpdateEmployee } from "./Func/useReturnUpdateEmployee";
+import { returnValidateFileData } from "./Func/returnValidateFileData";
+import { returnValidateInputs } from "./Func/returnValidateInputs";
 
 const ReturnCreateModalWEq = ({ open, dialogProps }) => {
   const { data, handleOpenCreateModal } = dialogProps;
   const dispatch = useDispatch();
   const returnUpdateEmployee = useReturnUpdateEmployee();
 
-  const predare = useSelector((state) => state.predare);
+  const predare = useSelector((state) => state.predare).filter(
+    (item) => item.dep === "tehnic"
+  );
   const locations = useSelector((state) => state.locatii);
   const employees = useSelector((state) => state.users.allUsers);
   const workEquipment = useSelector((state) => state.workEquipmentList);
@@ -43,6 +47,8 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
   );
 
   const [addedEquipment, setAddedEquipment] = useState([]);
+  const [quantity, setQuantity] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
   const fileUrl =
     "http://localhost:3000/coral/it/templates/retur-echip-lucru.docx";
@@ -75,6 +81,7 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
             return {
               ...eq,
               cantitate: matchingItem.cantitate,
+              stare: matchingItem.stare,
             };
           }
           return eq;
@@ -97,12 +104,20 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
     delete updatedFile.data;
     delete updatedFile._id;
     setFisa((prev) => {
+      const updates = selectedFile.echipament.map((item) => {
+        return {
+          ...item,
+          stare: "Uzat",
+        };
+      });
+
       return {
         ...prev,
         ...updatedFile,
         predator: selectedFile.primitor,
         primitor: updatedFile.predator,
-        pvPredare: selectedFile.fisa,
+        echipament: updates,
+        ...(selectedPv ? { pvPredare: selectedFile.fisa } : null),
       };
     });
   }, [selectedPv, predare]);
@@ -116,7 +131,22 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
     setSelectedEquipment(workEquipment.find((item) => item.id === newValue));
   };
 
+  const handleChangeQuantity = (e) => {
+    setQuantity(e.target.value);
+  };
+
   const handleAdaugaEchipament = () => {
+    const newValidationErrors = returnValidateInputs({
+      ...selectedEquipment,
+      cantitate: quantity,
+    });
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     setFisa((prev) => {
       const findItem = prev.echipament.find(
         (item) => item.id === selectedEquipment.id
@@ -127,16 +157,16 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
         ...prev,
         echipament: [
           ...prev.echipament,
-          { id: selectedEquipment.id, cantitate: selectedEquipment.cantitate },
+          { id: selectedEquipment.id, cantitate: quantity, stare: "Uzat" },
         ],
       };
     });
 
     setSelectedEquipment(WORK_EQUIPMENT_INITIAL_STATE);
+    setQuantity("");
   };
 
   const handleRemoveEquipment = (itemID) => {
-    console.log(itemID);
     setFisa((prev) => {
       return {
         ...prev,
@@ -146,6 +176,14 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
   };
 
   const handleCreateFile = async () => {
+    const newValidationErrors = returnValidateFileData(fisa);
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      console.log("Toate campurile sunt obligatorii");
+      return;
+    }
+    setValidationErrors({});
+
     if (fisa.echipament.length === 0) return;
 
     const response = await dispatch(addFisaRetur(fisa));
@@ -160,7 +198,10 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
           const eqUpdate = {
             ...item,
             pv: [...item.pv, fisa.fisa],
-            cantitate: parseInt(item.cantitate) + parseInt(addedEq.cantitate),
+            stocUzat: parseInt(item.stocUzat) + parseInt(addedEq.cantitate),
+            predat: item.predat
+              ? parseInt(item.predat) - parseInt(addedEq.cantitate)
+              : parseInt(addedEq.cantitate),
           };
 
           dispatch(updateWorkEquipment(eqUpdate));
@@ -265,7 +306,20 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
             <Autocomplete
               options={employees.map((employee) => employee.nume)}
               renderInput={(params) => (
-                <TextField {...params} label="Predator" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Predator"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.predator}
+                  helperText={validationErrors.predator}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      predator: undefined,
+                    })
+                  }
+                />
               )}
               value={fisa.predator}
               onChange={(event, newValue) => {
@@ -282,7 +336,20 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
             <Autocomplete
               options={employees.map((employee) => employee.nume)}
               renderInput={(params) => (
-                <TextField {...params} label="Primitor" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Primitor"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.primitor}
+                  helperText={validationErrors.primitor}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      primitor: undefined,
+                    })
+                  }
+                />
               )}
               value={fisa.primitor}
               onChange={(event, newValue) => {
@@ -300,7 +367,20 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
             <Autocomplete
               options={locations.map((loc) => loc.proiect)}
               renderInput={(params) => (
-                <TextField {...params} label="Locatie" variant="standard" />
+                <TextField
+                  {...params}
+                  label="Locatie"
+                  variant="standard"
+                  required={true}
+                  error={!!validationErrors.locatie}
+                  helperText={validationErrors.locatie}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      locatie: undefined,
+                    })
+                  }
+                />
               )}
               onChange={(event, newValue) => {
                 if (newValue) {
@@ -322,7 +402,21 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
                   id="combo-box-demo"
                   sx={{ marginTop: "5px" }}
                   options={workEquipment.map((item) => item.id)}
-                  renderInput={(params) => <TextField {...params} label="ID" />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="ID"
+                      required={true}
+                      error={!!validationErrors.id}
+                      helperText={validationErrors.id}
+                      onFocus={() =>
+                        setValidationErrors({
+                          ...validationErrors,
+                          id: undefined,
+                        })
+                      }
+                    />
+                  )}
                   onChange={handleIdChange}
                   size="small"
                 />
@@ -339,6 +433,22 @@ const ReturnCreateModalWEq = ({ open, dialogProps }) => {
                   sx={{ width: "100%" }}
                   value={selectedEquipment.marime}
                   disabled
+                />
+                <TextField
+                  variant="standard"
+                  label="Cantitate"
+                  sx={{ width: "100%" }}
+                  value={quantity}
+                  onChange={handleChangeQuantity}
+                  required={true}
+                  error={!!validationErrors.cantitate}
+                  helperText={validationErrors.cantitate}
+                  onFocus={() =>
+                    setValidationErrors({
+                      ...validationErrors,
+                      cantitate: undefined,
+                    })
+                  }
                 />
               </Box>
 

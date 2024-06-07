@@ -12,6 +12,8 @@ const Notice = ({ equipment }) => {
   const [noticeList, setNoticeList] = useState([]);
   const [noticeState, setNoticeState] = useState("");
 
+  console.log(equipment)
+
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -22,6 +22,9 @@ export const useHandoverUpdateEquipment = () => {
             eq.stare === "Uzat"
               ? parseInt(eq.stocUzat) - parseInt(eq.cantitate)
               : parseInt(eq.stocUzat),
+          predat: eq.predat
+            ? parseInt(eq.predat) - parseInt(eq.cantitate)
+            : parseInt(eq.cantitate),
         };
       } else {
         updates[id] = {
@@ -35,12 +38,16 @@ export const useHandoverUpdateEquipment = () => {
             eq.stare === "Uzat"
               ? updates[id].stocUzat - parseInt(eq.cantitate)
               : updates[id].stocUzat,
+          predat: eq.predat
+            ? parseInt(eq.predat) - parseInt(eq.cantitate)
+            : parseInt(eq.cantitate),
         };
       }
     });
 
     Object.values(updates).forEach((eqUpdate) => {
       delete eqUpdate.cantitate;
+      delete eqUpdate.stare;
       dispatch(updateWorkEquipment(eqUpdate));
     });
   };
