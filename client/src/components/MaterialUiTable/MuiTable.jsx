@@ -235,7 +235,7 @@ const MuiTable = ({ props }) => {
     ),
     muiTableContainerProps: {
       sx: {
-        height: "70vh",
+        height: "69vh",
         width: "90vw",
       },
     },

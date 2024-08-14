@@ -24,7 +24,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "tip",
       header: "Tip",
       size: 100,
-      grow: true,
+      grow: false,
       enableEditing: loggedUser.superuser ? true : false,
       editSelectOptions: IT_EQUIPMENT_TYPES,
       muiEditTextFieldProps: {
@@ -41,7 +41,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "model",
       header: "Model",
       size: 180,
-      grow: true,
+      grow: false,
       enableEditing: loggedUser.superuser ? true : false,
       enableClickToCopy: true,
       muiCopyButtonProps: {
@@ -54,7 +54,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "serie",
       header: "Serie",
       size: 100,
-      grow: true,
+      grow: false,
       enableEditing: loggedUser.superuser ? true : false,
       enableClickToCopy: true,
       muiCopyButtonProps: {
@@ -67,7 +67,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "pret",
       header: "Pret",
       size: 50,
-      grow: true,
+      grow: false,
       filterFn: "between",
       enableEditing: loggedUser.superuser ? true : false,
       muiEditTextFieldProps: {
@@ -108,7 +108,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "stare",
       header: "Status",
       size: 60,
-      grow: true,
+      grow: false,
       required: true,
       enableEditing: true,
 
@@ -129,6 +129,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       header: "Persoana",
       enableEditing: loggedUser.superuser ? true : false,
       size: 70,
+      grow: false,
       Edit: () => null,
       enableClickToCopy: true,
       muiCopyButtonProps: {
@@ -141,6 +142,7 @@ export const IT_EQUIPMENT_MATERIAL_TABLE_COLUMNS = (locations) => {
       accessorKey: "locatie",
       header: "Locatie",
       size: 70,
+      grow: false,
       enableEditing: loggedUser.superuser ? true : false,
       editSelectOptions: Array.isArray(locations)
         ? locations.map((item) => item.proiect)
